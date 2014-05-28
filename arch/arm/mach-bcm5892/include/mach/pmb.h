@@ -55,6 +55,8 @@ typedef enum pmb_mbox_ids {
     CLS_RSA_KEY_GEN_ID,
     OPEN_API_TABLE_INIT,
 	CLS_DDR_SELF_RERRESH_ENABLE,
+
+	SCL_TEST_ID,
 	INVALID_ID,
 } PMB_MBOX_ID;
 

@@ -58,17 +58,49 @@ HW_EXTERN_SPINLOCK(Gpio)
 
 /* GPIO group base, from bcm5892_reg.h */
 /* There are 5 GPIO groups in 5892 */
-#define	HW_GPIO0_PHY_BASE	GIO0_REG_BASE_ADDR
-#define	HW_GPIO1_PHY_BASE	GIO1_REG_BASE_ADDR
-#define	HW_GPIO2_PHY_BASE	GIO2_REG_BASE_ADDR
-#define	HW_GPIO3_PHY_BASE	GIO3_REG_BASE_ADDR
-#define	HW_GPIO4_PHY_BASE	GIO4_REG_BASE_ADDR
+#define	HW_GPIO0_PHY_BASE	GIO0_REG_BASE_ADDR	  //0xcc000
+#define	HW_GPIO1_PHY_BASE	GIO1_REG_BASE_ADDR    //0xcd000
+#define	HW_GPIO2_PHY_BASE	GIO2_REG_BASE_ADDR	  //0xe5000
+#define	HW_GPIO3_PHY_BASE	GIO3_REG_BASE_ADDR	  //0xd7000
+#define	HW_GPIO4_PHY_BASE	GIO4_REG_BASE_ADDR	  //0xe6000
 
 
-#define HW_GPIO0_NUM_PIN    23
-#define HW_GPIO1_NUM_PIN    32
-#define HW_GPIO2_NUM_PIN    30
-#define HW_GPIO3_NUM_PIN    19
+//add by lee
+typedef enum 
+{
+	//a-->23
+	BCM5892_GPA0,  BCM5892_GPA1,  BCM5892_GPA2,  BCM5892_GPA3,  BCM5892_GPA4,  BCM5892_GPA5,  BCM5892_GPA6,
+	BCM5892_GPA7,  BCM5892_GPA8,  BCM5892_GPA9,  BCM5892_GPA10, BCM5892_GPA11, BCM5892_GPA12, BCM5892_GPA13,
+	BCM5892_GPA14, BCM5892_GPA15, BCM5892_GPA16, BCM5892_GPA17, BCM5892_GPA18, BCM5892_GPA19, BCM5892_GPA20,
+	BCM5892_GPA21, BCM5892_GPA22,
+	//b-->32
+	BCM5892_GPB0,  BCM5892_GPB1,  BCM5892_GPB2,  BCM5892_GPB3,  BCM5892_GPB4,  BCM5892_GPB5,  BCM5892_GPB6,   BCM5892_GPB7,
+	BCM5892_GPB8,  BCM5892_GPB9,  BCM5892_GPB10, BCM5892_GPB11, BCM5892_GPB12, BCM5892_GPB13, BCM5892_GPB14,  BCM5892_GPB15,
+	BCM5892_GPB16, BCM5892_GPB17, BCM5892_GPB18, BCM5892_GPB19, BCM5892_GPB20, BCM5892_GPB21, BCM5892_GPB22,  BCM5892_GPB23,
+	BCM5892_GPB24, BCM5892_GPB25, BCM5892_GPB26, BCM5892_GPB27, BCM5892_GPB28, BCM5892_GPB29, BCM5892_GPB30,  BCM5892_GPB31,
+	
+	//c-->30
+	BCM5892_GPC0,  BCM5892_GPC1,  BCM5892_GPC2,  BCM5892_GPC3,  BCM5892_GPC4,  BCM5892_GPC5,  BCM5892_GPC6,   BCM5892_GPC7,
+	BCM5892_GPC8,  BCM5892_GPC9,  BCM5892_GPC10, BCM5892_GPC11, BCM5892_GPC12, BCM5892_GPC13, BCM5892_GPC14,  BCM5892_GPC15,
+	BCM5892_GPC16, BCM5892_GPC17, BCM5892_GPC18, BCM5892_GPC19, BCM5892_GPC20, BCM5892_GPC21, BCM5892_GPC22,  BCM5892_GPC23, 
+	BCM5892_GPC24, BCM5892_GPC25, BCM5892_GPC26, BCM5892_GPC27, BCM5892_GPC28, BCM5892_GPC29,
+
+	//d-->19
+	BCM5892_GPD0,  BCM5892_GPD1,  BCM5892_GPD2,  BCM5892_GPD3,  BCM5892_GPD4,  BCM5892_GPD5,  BCM5892_GPD6,   BCM5892_GPD7,
+	BCM5892_GPD8,  BCM5892_GPD9,  BCM5892_GPD10, BCM5892_GPD11, BCM5892_GPD12, BCM5892_GPD13, BCM5892_GPD14,  BCM5892_GPD15,
+	BCM5892_GPD16, BCM5892_GPD17, BCM5892_GPD18,
+
+	//e-->10
+	BCM5892_GPE0,  BCM5892_GPE1,  BCM5892_GPE2,  BCM5892_GPE4,  BCM5892_GPE5,  BCM5892_GPE6,
+	BCM5892_GPE7,  BCM5892_GPE8,  BCM5892_GPE9,
+	
+}GPIO_NUM;
+
+
+#define HW_GPIO0_NUM_PIN    23   //a
+#define HW_GPIO1_NUM_PIN    32	 //b
+#define HW_GPIO2_NUM_PIN    30	 //c
+#define HW_GPIO3_NUM_PIN    19	 //d
 #define HW_GPIO4_NUM_PIN    10 /* If we change any of these number, need to also change ARCH_NR_GPIOS defined in gpio.h */
 
 #define HW_GPIO0_PIN_MAX    HW_GPIO0_NUM_PIN                       /* 23 */
@@ -192,7 +224,7 @@ typedef enum /* It's ok to have defines have same value */
 /*
 ** End of public API
 --------------------------------------------------------------------------*/
-
+//寄存器偏移 lee
 /* Register offsets */
 #define REGOFFSET_GPIO_IOTR         0x000 /* GPIO Data in register */
 #define REGOFFSET_GPIO_DOUT         0x004 /* GPIO Data out register */
@@ -226,7 +258,7 @@ typedef enum /* It's ok to have defines have same value */
 #define REG_GPIO_FROM_PIN(nPin, nRegOffset)    \
                           __REG32 (IO_ADDRESS (HW_GPIO_PIN_TO_GROUPBASE(nPin) + (HW_GPIO_SUBGROUP_NONE << HW_GPIO_SUBGROUP_SHIFT) + nRegOffset))
 
-/* Get PIO register address from group & subgroup number */
+/* Get GPIO register address from group & subgroup number */
 #define REG_GPIO_FROM_SUBGROUP(nGrp, nSubGrp, nRegOffset)  \
                           __REG32 (IO_ADDRESS (HW_GPIO_NUM_TO_GROUPBASE(nGrp) + (nSubGrp << HW_GPIO_SUBGROUP_SHIFT) + nRegOffset))
 
@@ -259,9 +291,13 @@ static inline int reg_gpio_iotr_get_pin_type( int pin )
 
 }
 
+
+//设置指定GPIO口类型
 static inline void reg_gpio_iotr_set_pin_type( int pin, GPIO_PIN_TYPE pinType )
 {
     unsigned long flags;
+	
+	//由于GPIO口是连号设计的(0~114),那么此操作就是把GPIO号,转化成具体的一组中的号码
     unsigned int  nBitMask = (1 << HW_GPIO_PIN_TO_BIT_OFFSET(pin)); /* this is not for pin number indicates AUX since that will be too big */
 
 
@@ -280,11 +316,11 @@ static inline void reg_gpio_iotr_set_pin_type( int pin, GPIO_PIN_TYPE pinType )
              /* Set input/output */
              if (pinType == GPIO_PIN_TYPE_OUTPUT)
              {
-                 REG_GPIO_FROM_PIN (pin, REGOFFSET_GPIO_EN) |= nBitMask;
+                 REG_GPIO_FROM_PIN (pin, REGOFFSET_GPIO_EN) |= nBitMask;  //设置为输出此位置1
 			 }
 			 else
 			 {
-                 REG_GPIO_FROM_PIN (pin, REGOFFSET_GPIO_EN) &= ~nBitMask;
+                 REG_GPIO_FROM_PIN (pin, REGOFFSET_GPIO_EN) &= ~nBitMask; //设置为输入此位置0
 			 }
 
 			 break;
@@ -373,10 +409,11 @@ static inline void reg_gpio_iotr_set_pin_type( int pin, GPIO_PIN_TYPE pinType )
     HW_IRQ_RESTORE(Gpio, flags);
 }
 
+//设置输出值
 static inline void reg_gpio_set_pin( int pin, int val )
 {
     unsigned long flags;
-    unsigned int  nBitMask = (1 << HW_GPIO_PIN_TO_BIT_OFFSET(pin));
+    unsigned int  nBitMask = (1 << HW_GPIO_PIN_TO_BIT_OFFSET(pin));  //确定在自组中的数值
 
     HW_IRQ_SAVE( Gpio, flags );
     if ( val == 0 )
@@ -392,6 +429,8 @@ static inline void reg_gpio_set_pin( int pin, int val )
     HW_IRQ_RESTORE( Gpio, flags );
 }
 
+
+//读出某个GPIO口最后一次输出的值
 static inline int reg_gpio_get_pin_output( int pin )
 {
     unsigned int  nBitMask = (1 << HW_GPIO_PIN_TO_BIT_OFFSET(pin));
@@ -400,14 +439,16 @@ static inline int reg_gpio_get_pin_output( int pin )
 }
 
 
-static inline int reg_gpio_get_pin( int pin )
+
+//读出输入输出值
+static inline int reg_gpio_get_pin( int pin )  
 {
     unsigned int  nBitMask = (1 << HW_GPIO_PIN_TO_BIT_OFFSET(pin));
 
-    return ( REG_GPIO_FROM_PIN (pin, REGOFFSET_GPIO_DOUT) & nBitMask ) != 0;
+    return ( REG_GPIO_FROM_PIN (pin, REGOFFSET_GPIO_IOTR) & nBitMask ) != 0;
 }
 
-
+//中断使能
 static inline int reg_gpio_is_interrupt_enable( int pin )
 {
     unsigned int  nBitMask = (1 << HW_GPIO_PIN_TO_BIT_OFFSET(pin));
@@ -467,7 +508,7 @@ static inline void reg_gpio_itr_set_interrupt_type( int pin, GPIO_INTERRUPT_TYPE
 }
 
 
-
+//电阻上拉下拉设置寄存器
 static inline void reg_gpio_set_pull_up_down( int pin, int val )
 {
     unsigned int  nBitMask = (1 << HW_GPIO_PIN_TO_BIT_OFFSET(pin));
@@ -499,25 +540,29 @@ static inline void reg_gpio_set_pull_up_down( int pin, int val )
     }
 }
 
-
+//电阻使能寄存器
 static inline void reg_gpio_set_pull_up_down_enable( int pin )
 {
     unsigned int  nBitMask = (1 << HW_GPIO_PIN_TO_BIT_OFFSET(pin));
 
     if (pin < ARCH_NR_GPIOS) {
     	REG_GPIO_FROM_PIN (pin, REGOFFSET_GPIO_RES_EN) |= nBitMask; /* Enable PAD resister */
-    } else {
+    } 
+	else 
+    {
 	/* 5892 specific subgroup */
-	REG_GPIO_FROM_SUBGROUP(GPIO_AUX_TO_GROUP(pin), GPIO_AUX_TO_SUBGROUP1(pin), REGOFFSET_GPIO_RES_EN)   |= ALL_BITS;
+		REG_GPIO_FROM_SUBGROUP(GPIO_AUX_TO_GROUP(pin), GPIO_AUX_TO_SUBGROUP1(pin), REGOFFSET_GPIO_RES_EN)   |= ALL_BITS;
 
-	if (GPIO_AUX_IS_SUBGROUP2_EXIST(pin)) {
-		BCM5892_GPIO_DEBUG ("aux1, subgroup field2 exist\n");
+		if (GPIO_AUX_IS_SUBGROUP2_EXIST(pin)) 
+		{
+			BCM5892_GPIO_DEBUG ("aux1, subgroup field2 exist\n");
 
-		REG_GPIO_FROM_SUBGROUP(GPIO_AUX_TO_GROUP(pin), GPIO_AUX_TO_SUBGROUP2(pin), REGOFFSET_GPIO_RES_EN)   |= ALL_BITS;
-	}
+			REG_GPIO_FROM_SUBGROUP(GPIO_AUX_TO_GROUP(pin), GPIO_AUX_TO_SUBGROUP2(pin), REGOFFSET_GPIO_RES_EN)   |= ALL_BITS;
+		}
     }
 }
 
+//电阻disable操作函数
 static inline void reg_gpio_set_pull_up_down_disable( int pin )
 {
     unsigned int  nBitMask = (1 << HW_GPIO_PIN_TO_BIT_OFFSET(pin));
@@ -543,6 +588,8 @@ typedef enum
     GPIO_DRV_STRENGTH_6mA		= 0x06,
     GPIO_DRV_STRENGTH_8mA		= 0x08
 } GPIO_DRV_STRENGTH;
+
+
 
 static inline void reg_gpio_set_drv_strength( int pin, GPIO_DRV_STRENGTH val )
 {
@@ -619,14 +666,16 @@ static inline void reg_gpio_set_drv_strength( int pin, GPIO_DRV_STRENGTH val )
 	case GPIO_DRV_STRENGTH_8mA:
 
 		REG_GPIO_FROM_SUBGROUP(GPIO_AUX_TO_GROUP(pin), GPIO_AUX_TO_SUBGROUP1(pin), REGOFFSET_GPIO_DRV_SEL0_SW)   |= ALL_BITS;
-		if (GPIO_AUX_IS_SUBGROUP2_EXIST(pin)) {
+		if (GPIO_AUX_IS_SUBGROUP2_EXIST(pin)) 
+		{
 			BCM5892_GPIO_DEBUG ("aux1, subgroup field2 exist\n");
 
 			REG_GPIO_FROM_SUBGROUP(GPIO_AUX_TO_GROUP(pin), GPIO_AUX_TO_SUBGROUP2(pin), REGOFFSET_GPIO_DRV_SEL0_SW)   |= ALL_BITS;
 		}
 
 		REG_GPIO_FROM_SUBGROUP(GPIO_AUX_TO_GROUP(pin), GPIO_AUX_TO_SUBGROUP1(pin), REGOFFSET_GPIO_DRV_SEL1_SW)   &= ~ALL_BITS;
-		if (GPIO_AUX_IS_SUBGROUP2_EXIST(pin)) {
+		if (GPIO_AUX_IS_SUBGROUP2_EXIST(pin)) 
+		{
 			BCM5892_GPIO_DEBUG ("aux1, subgroup field2 exist\n");
 
 			REG_GPIO_FROM_SUBGROUP(GPIO_AUX_TO_GROUP(pin), GPIO_AUX_TO_SUBGROUP2(pin), REGOFFSET_GPIO_DRV_SEL1_SW)   &= ~ALL_BITS;

@@ -181,7 +181,6 @@ static int bcm_umi_bch_read_page_hwecc(struct mtd_info *mtd,
 			sectorIdx++, datap += eccsize) {
 		if (sectorIdx > 0) {
 			/* Seek to page location within sector */
-			printf("chip->cmdfunc(mtd, NAND_CMD_RNDOUT, sectorIdx * eccsize,-1)\n");
 			chip->cmdfunc(mtd, NAND_CMD_RNDOUT, sectorIdx * eccsize,
 				      -1);
 		}
@@ -202,7 +201,6 @@ static int bcm_umi_bch_read_page_hwecc(struct mtd_info *mtd,
 			 * location and don't need a READOOB command. Also  
 			 * RNDOUT isn't available in general on 512 byte devices.
 			 */
-			printf(chip->cmdfunc(mtd, NAND_CMD_RNDOUT,writesize + sectorIdx * sectorOobSize, -1)\n);
 			chip->cmdfunc(mtd, NAND_CMD_RNDOUT,
 						writesize + sectorIdx * sectorOobSize, -1);
 		}

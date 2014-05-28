@@ -54,6 +54,7 @@ module_param(debug, int, 0644);
 #define GET_SC(mtd)	(struct bcm5892_nand_softc *)(container_of(mtd, 	\
 				      struct bcm5892_nand_softc, bcm5892_mtd_info))
 #define PAGE_ADDRESS(x) (x * (1 << pg_addr_shift))
+//#define PAGE_ADDRESS(x) (x * (1 <<12))
 #define PDEBUG(fmt, args...) if (debug) printk( KERN_INFO "BCM5892_NAND: " fmt, ## args)
 
 
@@ -65,13 +66,15 @@ static struct mtd_partition BCM5892_nand_partition [] = {
 },           
 {
 	.name		= "yaffs2",
-	.size		= 0x1E00000,	// 30MB
-	.offset		= 0x1000000,
+	.size		= 0x2E00000,	// 30MB
+	.offset		=  0x1000000,
 },
 {
 	.name		= "NAND-block2",
-	.size		= MTDPART_SIZ_FULL,
-	.offset		= MTDPART_OFS_NXTBLK,
+//	.size		= MTDPART_SIZ_FULL,
+//	.offset		= MTDPART_OFS_NXTBLK,
+	.size		= 0x10000000-(0x2E00000+0x1000000),
+	.offset		= (0x2E00000+0x1000000),
 }
 };
 
@@ -179,7 +182,6 @@ static uint32_t umc_nand_word_rd (struct bcm5892_nand_softc *sc, uint8_t cs)
                 | ( NAND_PAGE_RD_E_CMD << 11)
                 | ( 1 << 19)     // Data Phase
 		;
-//	printk("0000000\n");
 	return  readl (addr);
 }
 
@@ -228,11 +230,12 @@ static void umc_nand_blk_erase( struct bcm5892_nand_softc *sc, uint32_t cs,
 	uint32_t addr;
 	uint32_t device_addr1 = address;
 	uint8_t  no_addr_cycles = 0x3;
-
+//	printk("umc_nand_blk erase  lee\n");
 	st_cmd  = NAND_BLK_ERS_S_CMD;
 	end_cmd = NAND_BLK_ERS_E_CMD;
 
 	addr = (u32) (cs ? sc->nand_cs1_base:sc->nand_cs0_base);
+	
 
 	addr = addr | (st_cmd << 3)
                 | (end_cmd << 11)
@@ -240,6 +243,7 @@ static void umc_nand_blk_erase( struct bcm5892_nand_softc *sc, uint32_t cs,
                 | ( 1 << 20)              //  End Command Valid = 1
 		;
 	writel (device_addr1, addr);
+//	CPU_WRITE_SINGLE(addr, device_addr1, AHB_BIT32); //add by lee
 }     
 
 /* Read the ID*/
@@ -278,6 +282,7 @@ static void umc_nand_readid_cmd(struct bcm5892_nand_softc *sc, uint32_t cs,
 
 	/* set up addr cycles based on device */
 	rand_op_addr_cyc = 2;	
+	dev_id=0xda;
 	switch (dev_id) {
 	case MICRON_1G_16BIT:
 		rd_addr_cyc	= 4;
@@ -286,22 +291,13 @@ static void umc_nand_readid_cmd(struct bcm5892_nand_softc *sc, uint32_t cs,
 		nand->options	|= NAND_BUSWIDTH_16;		
 		break;
 
-	case MICRON_2G_8BIT:
-		printk("MICRON_2G_8BIT config param lee\n");
-/*
-		rd_addr_cyc	= 5;
-		prg_addr_cyc	= 5;
-		rand_op_addr_cyc = 5;	
-		pg_addr_shift	= 12;
-		dev_width = 8;		//add by lee
-//		nand->options	|= NAND_BUSWIDTH_16; //del by lee		
-*/
+	case MICRON_2G_8BIT:		//add by lee
+	//	printk("config mircon 2g 8bit\n");
 		rd_addr_cyc	= 5;
 		prg_addr_cyc	= 5;
 		pg_addr_shift	= 12;
 		dev_width = 8;
-		break;
-
+//		rand_op_addr_cyc =5;
 		break;
 	case STMICRO_2G_8BIT:
 		rd_addr_cyc	= 5;
@@ -336,9 +332,12 @@ static void umc_nand_readid_cmd(struct bcm5892_nand_softc *sc, uint32_t cs,
 		break;
 	}
 
-	if(dev_width == 8) { /* reconfigure for 8-bit device */
+	if(dev_width == 8) 
+	{ /* reconfigure for 8-bit device */
+//		printk("set umc memif cfg dev width 8 lee ");
 		umc_memif_cfg(sc, TYPE_SRAM_NONMUXED,CHIPS_2, WIDTH_8, 
 		      TYPE_NAND, CHIPS_1, WIDTH_8);
+
 		umc_config_cs(sc, CHIP_SELECT,INTERFACE_1,0,0,0,0,WIDTH_8);
 	}
 
@@ -549,6 +548,7 @@ static uint32_t umc_nand_page_rd_end( struct bcm5892_nand_softc *sc, uint32_t cs
 	addr = (u32)(cs ? sc->nand_cs1_base:sc->nand_cs0_base);
 	addr = addr | 0x00298400;
 	return  readl (addr);
+//	return CPU_READ_SINGLE(addr, AHB_BIT32);  //add by lee
 }
 
 // ----------------------------------------------------------------------------
@@ -568,6 +568,14 @@ static void  umc_random_data_rd_cmd( struct bcm5892_nand_softc * sc,  uint32_t c
 	dev_ad_byte[3] = ( width == 8) ? (address >> 24) & 0xff : (address >> 24) & 0xff;
 	dev_ad_byte[4] = ( width == 8) ? (address >> 28) & 0x03 : (address >> 26) & 0x03;
 
+/*
+	//added by lee
+        dev_ad_byte[0] = ( width == 8) ? (addr    ) & 0xff : (addr >>  1) & 0xff;       // CA[7:0]
+        dev_ad_byte[1] = ( width == 8) ? (addr >>  8) & 0x0f : (addr >>  9) & 0x07; // CA[10:8]
+        dev_ad_byte[2] = ( width == 8) ? (addr >> 12) & 0xff : (addr >> 12) & 0xff; // {BA[1:0],PA[5:0]}
+        dev_ad_byte[3] = ( width == 8) ? (addr >> 20) & 0xff : (addr >> 20) & 0xff;
+        dev_ad_byte[4] = ( width == 8) ? (addr >> 28) & 0x03 : (addr >> 28) & 0x03;
+*/
 	device_addr1 = (dev_ad_byte[3] << 24) |
 		(dev_ad_byte[2] << 16) |
 		(dev_ad_byte[1] <<  8) |
@@ -676,7 +684,8 @@ static void umc_nand_page_rd_cmd( struct bcm5892_nand_softc *sc, uint32_t cs,
 	uint32_t device_addr1 = address;
 	uint32_t device_addr2 = 0x0;
 	uint8_t  dev_ad_byte[5] = { 0 };
-	uint32_t manuf_id = sc->read_id  & 0xff;
+//	uint32_t manuf_id = sc->read_id  & 0xff;
+	uint32_t manuf_id = 0xda;
 
 	if (manuf_id == 0x2C) { // for Micron 1Gb
 		dev_ad_byte[0] = ( width == 8) ? 
@@ -689,6 +698,8 @@ static void umc_nand_page_rd_cmd( struct bcm5892_nand_softc *sc, uint32_t cs,
 			(address >> 24) & 0xff : (address >> 24) & 0xff;
 		dev_ad_byte[4] = ( width == 8) ? 
 			(address >> 28) & 0x03 : (address >> 26) & 0x03;
+
+              //  printk("manuf_id==0x2c read  add by lee\n");
 	} else if (manuf_id == 0x20) { // STMicro 
 		dev_ad_byte[0] = ( width == 8) ? 
 			(address) & 0xff : (address >>  1) & 0xff; // CA[7:0]
@@ -700,36 +711,31 @@ static void umc_nand_page_rd_cmd( struct bcm5892_nand_softc *sc, uint32_t cs,
 			(address >> 20) & 0xff : (address >> 20) & 0xff;
 		dev_ad_byte[4] = ( width == 8) ? 
 			(address >> 28) & 0x01 : (address >> 28) & 0x03;
+              //  printk("manuf_id==0x20 read  add by lee\n");
 
-	}else if(manuf_id == 0xda){ //for Micron 2Gb    add by lee
+	}else if (manuf_id == 0xda) //for Micron 2Gb  add by lee
+	{
 
-          	dev_ad_byte[0] = ( width == 8) ? (address) & 0xff :
-                               (address >>  1) & 0xff; // CA[7:0]
-          	dev_ad_byte[1] = ( width == 8) ? (address >>  8) & 0x0f :
-                               (address >>  9) & 0x07; // CA[10:8]
-          	dev_ad_byte[2] = ( width == 8) ? (address >> 12) & 0xff :
-                               (address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
-          	dev_ad_byte[3] = ( width == 8) ? (address >> 20) & 0xff :
-                               (address >> 20) & 0xff;
-          	dev_ad_byte[4] = ( width == 8) ? (address >> 28) & 0x03 :
-                               (address >> 28) & 0x03;
-		printk("manuf_id==0xda read  add by lee\n");
+
+                dev_ad_byte[0] = ( width == 8) ? (address) & 0xff : (address >>  1) & 0xff; // CA[7:0]
+                dev_ad_byte[1] = ( width == 8) ? (address >>  8) & 0x0f :(address >>  9) & 0x07; // CA[10:8]
+                dev_ad_byte[2] = ( width == 8) ? (address >> 12) & 0xff :(address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
+                dev_ad_byte[3] = ( width == 8) ? (address >> 20) & 0xff :(address >> 20) & 0xff;
+                dev_ad_byte[4] = ( width == 8) ? (address >> 28) & 0x03 :(address >> 28) & 0x03;
 
 /*
-		dev_ad_byte[0] = ( width == 8) ? 
-			(address) & 0xff : (address >>  1) & 0xff; // CA[7:0]
-		dev_ad_byte[1] = ( width == 8) ? 
-			(address >>  8) & 0x0f : (address >>  9) & 0x07; // CA[10:8]
-		dev_ad_byte[2] = ( width == 8) ? 
-			(address >> 12) & 0xff : (address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
-		dev_ad_byte[3] = ( width == 8) ? 
-			(address >> 20) & 0xff : (address >> 20) & 0xff;
-		dev_ad_byte[4] = ( width == 8) ? 
-			(address >> 28) & 0x01 : (address >> 28) & 0x03;
-
+                dev_ad_byte[0] = ( width == 8) ? 
+                        (address) & 0xff : (address >>  1) & 0xff; // CA[7:0]
+                dev_ad_byte[1] = ( width == 8) ? 
+                        (address >>  8) & 0x0f : (address >>  9) & 0x07; // CA[10:8]
+                dev_ad_byte[2] = ( width == 8) ? 
+                        (address >> 12) & 0xff : (address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
+                dev_ad_byte[3] = ( width == 8) ? 
+                        (address >> 20) & 0xff : (address >> 20) & 0xff;
+                dev_ad_byte[4] = ( width == 8) ? 
+                        (address >> 28) & 0x01 : (address >> 28) & 0x03;
 */
-        }
-
+	}
 
 	device_addr1 = (dev_ad_byte[3] << 24) |
 		(dev_ad_byte[2] << 16) |
@@ -751,10 +757,17 @@ static void umc_nand_page_rd_cmd( struct bcm5892_nand_softc *sc, uint32_t cs,
 	writel (device_addr1,addr);
 
 	PDEBUG ("NAND Page Read Command Issue :  0x%x : 0x%x 0x%x\n", address,device_addr1, device_addr2);
-//	printk ("NAND Page Read Command Issue :  0x%x : 0x%x 0x%x\n", address,device_addr1, device_addr2);
 
 	if (no_addr_cycles == 5)
 		writel (device_addr2, addr);
+
+/*
+    CPU_WRITE_SINGLE(addr, device_addr1, AHB_BIT32);
+    if( no_addr_cycles == 5 ) 
+    {
+        CPU_WRITE_SINGLE(addr, device_addr2, AHB_BIT32);
+    }
+*/
 	
 }
 				  
@@ -786,21 +799,16 @@ static void umc_nand_page_rd(struct bcm5892_nand_softc *sc, uint32_t cs,
 		printk(KERN_ERR "%s: %d Critical Error: HW Read operation FAILED!!!\n",
 		       __func__, __LINE__);
 
-//	printk("---------------1----------------------------\n");
 	num_of_words = bytesize/4;
 	for ( i = 0 ; i <  num_of_words; i++) 
 	{
 		data = umc_nand_word_rd(sc,cs);
-	//	printk("0000111000\n");
 		*((uint32_t*)dst_ptr) = data;
 		dst_ptr += 4;
-
 	}
 
-//	printk("---------------2----------------------------\n");
 	data = umc_nand_page_rd_end( sc, cs);
 	writel ( data, dst_ptr);
-//	printk("--------------------------------------------\n");
 }
 
 // ----------------------------------------------------------------------------
@@ -816,7 +824,8 @@ static void umc_nand_page_prg_start( struct bcm5892_nand_softc *sc,
 	uint32_t device_addr1 = address;
 	uint32_t device_addr2 = 0x0;
 	uint8_t  dev_ad_byte[5] = { 0 };
-	uint32_t manuf_id = sc->read_id  & 0xff;
+//	uint32_t manuf_id = sc->read_id  & 0xff;
+	uint32_t manuf_id = 0xda;
 
 	if (manuf_id == 0x20) { // STMicro  
 		dev_ad_byte[0] = ( width == 8) ? (address) & 0xff : 
@@ -841,32 +850,27 @@ static void umc_nand_page_prg_start( struct bcm5892_nand_softc *sc,
 			(address >> 24) & 0xff;
 		dev_ad_byte[4] = ( width == 8) ? (address >> 28) & 0x03 : 
 			(address >> 26) & 0x03;
-	}else if(manuf_id == 0xda){// Micron  2G       //add by lee
-
-        	dev_ad_byte[0] = ( width == 8) ? (address) & 0xff :     //
-                           (address >>  1) & 0xff; // CA[7:0]
-        	dev_ad_byte[1] = ( width == 8) ? (address >>  8) & 0x0f :  //
-                           (address >>  9) & 0x07; // CA[10:8]
-        	dev_ad_byte[2] = ( width == 8) ? (address >> 12) & 0xff :
-                           (address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
-        	dev_ad_byte[3] = ( width == 8) ? (address >> 20) & 0xff :
-                           (address >> 20) & 0xff;
-        	dev_ad_byte[4] = ( width == 8) ? (address >> 28) & 0x03 :
-                           (address >> 28) & 0x03;
-
+	}else if(manuf_id == 0xda){ //Micro   add by lee
 /*
-		dev_ad_byte[0] = ( width == 8) ? (address) & 0xff : 
-			(address >>  1) & 0xff; // CA[7:0]
-		dev_ad_byte[1] = ( width == 8) ? (address >>  8) & 0x0f : 
-			(address >>  9) & 0x07; // CA[10:8]
-		dev_ad_byte[2] = ( width == 8) ? (address >> 12) & 0xff : 
-			(address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
-		dev_ad_byte[3] = ( width == 8) ? (address >> 20) & 0xff : 
-			(address >> 20) & 0xff;
-		dev_ad_byte[4] = (width == 8) ? (address >> 28) & 0x01 : 
-					(address >> 28) & 0x03;
+	   	 dev_ad_byte[0] = ( width == 8) ? (address      ) & 0xff : (address >>  1) & 0xff; // CA[7:0]
+    		 dev_ad_byte[1] = ( width == 8) ? (address >>  8) & 0x0f : (address >>  9) & 0x07; // CA[10:8]
+    		 dev_ad_byte[2] = ( width == 8) ? (address >> 12) & 0xff : (address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
+    		 dev_ad_byte[3] = ( width == 8) ? (address >> 20) & 0xff : (address >> 20) & 0xff;
+    		 dev_ad_byte[4] = ( width == 8) ? (address >> 28) & 0x03 : (address >> 28) & 0x03;
 */
-        }
+
+                dev_ad_byte[0] = ( width == 8) ? 
+                        (address) & 0xff : (address >>  1) & 0xff; // CA[7:0]
+                dev_ad_byte[1] = ( width == 8) ? 
+                        (address >>  8) & 0x0f : (address >>  9) & 0x07; // CA[10:8]
+                dev_ad_byte[2] = ( width == 8) ? 
+                        (address >> 12) & 0xff : (address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
+                dev_ad_byte[3] = ( width == 8) ? 
+                        (address >> 20) & 0xff : (address >> 20) & 0xff;
+                dev_ad_byte[4] = ( width == 8) ? 
+                        (address >> 28) & 0x01 : (address >> 28) & 0x03;
+
+	}
 
 	device_addr1 = (dev_ad_byte[3] << 24) |
 		(dev_ad_byte[2] << 16) |
@@ -888,7 +892,12 @@ static void umc_nand_page_prg_start( struct bcm5892_nand_softc *sc,
 	writel (device_addr1, addr);
 	if (no_addr_cycles == 5 ) 
 		writel (device_addr2, addr);
-
+	
+/*
+	CPU_WRITE_SINGLE(addr, device_addr1, AHB_BIT32);  //change by lee
+	if (no_addr_cycles == 5 ) 
+		CPU_WRITE_SINGLE(addr, device_addr2, AHB_BIT32); //change by lee
+*/
 }
 
 static void umc_nand_word_wr(  struct bcm5892_nand_softc *sc, uint8_t cs, 
@@ -924,6 +933,7 @@ static void umc_nand_page_prg_end(struct bcm5892_nand_softc *sc, uint32_t cs, ui
 	addr = (u32)(cs ? sc->nand_cs1_base:sc->nand_cs0_base);
 	addr = addr | 0x00388400;
 	writel (data, addr);
+//	CPU_WRITE_SINGLE(addr, data, AHB_BIT32); //changed by lee 
 }
 
 static void umc_smallnand_page_prg_start(struct bcm5892_nand_softc *sc, uint32_t cs, 
@@ -1028,7 +1038,7 @@ static int block_checkbad(struct mtd_info *mtd, loff_t off)
 		column =  chip->badblockpos;
 
 		if (chip->options & NAND_BUSWIDTH_16) {
-			printk("chip->cmdfunc(mtd, NAND_CMD_READOOB, chip->badblockpos & 0xFE,page)\n");
+		//	printk("NAND_BUSWIDTH_16  -------lee\n");
 			chip->cmdfunc(mtd, NAND_CMD_READOOB, chip->badblockpos & 0xFE,
 				      page);
 			bad = chip->read_word(mtd);
@@ -1037,7 +1047,7 @@ static int block_checkbad(struct mtd_info *mtd, loff_t off)
 			if ((bad & 0xFF) != 0xff)
 				ret = 1;
 		} else {
-			printk("chip->cmdfunc(mtd, NAND_CMD_READOOB, chip->badblockpos, page)\n");
+		//	printk("NAND_NO_AUTOINCR  -------lee\n");
 			chip->cmdfunc(mtd, NAND_CMD_READOOB, chip->badblockpos, page);
 			if (chip->read_byte(mtd) != 0xff)
 				ret = 1;
@@ -1055,7 +1065,7 @@ out:	return ret;
 static int bcm_nand_erase(struct mtd_info *mtd, struct erase_info *instr)
 {
 	int start_blk;
-	int end_blk;
+	int end_blk,k=0;
 	int page, pages_per_block;
 	int ret;
 	uint32_t size = instr->len;
@@ -1115,10 +1125,11 @@ static int bcm_nand_erase(struct mtd_info *mtd, struct erase_info *instr)
 	/* get block number */
 	start_blk = offset >> chip->phys_erase_shift ;
 	end_blk = (offset + size) >> chip->phys_erase_shift;
+
 	if (offset & ((1 << chip->phys_erase_shift) -1))
 		end_blk++;
 
-	PDEBUG("offset = %x, size=%x, start_blk= %x, end_blk=%x\n", offset, size, 
+	PDEBUG("lee---->offset = %x, size=%x, start_blk= %x, end_blk=%x\n", offset, size, 
 	       start_blk, end_blk);
 
 	do
@@ -1126,10 +1137,10 @@ static int bcm_nand_erase(struct mtd_info *mtd, struct erase_info *instr)
 		  /*
 		   *  we do not erase bad blocks!
 		   */
-		  if (block_checkbad(mtd, offset)) {
+		  if (block_checkbad(mtd, offset)) 
+		  {
 			  printk(KERN_WARNING "bcm_nand_erase: "
-				 "attempt to erase bad block  0x%08x offset:%0x8 \n", 
-				 start_blk, offset);
+				 "attempt to erase bad block  0x%08x offset:%0x8 \n",  start_blk, offset);
 			  instr->state = MTD_ERASE_FAILED;
 			  goto erase_exit;
 		  }
@@ -1137,9 +1148,12 @@ static int bcm_nand_erase(struct mtd_info *mtd, struct erase_info *instr)
 		  if ((sc->read_id & 0xff) == 0xEC) 
 			  /* samsung */
 			  umc_smallnand_erase (sc, CHIP_SEL, dev_width, offset);
-		  else 
+		  else
+		   { 
 			  /* for Micron 1Gbx16, Numonyx */
+			
 			  umc_nand_blk_erase(sc,CHIP_SELECT, start_blk <<6);  // for Micron 1Gbx16, Nomonyx
+		   }
 		  mdelay(5);
 		  chip->waitfunc(mtd, chip);
 		  start_blk++;
@@ -1496,15 +1510,14 @@ static void bcm5892_cmdfunc(struct mtd_info *mtd,unsigned command,int column, in
 
 	/* Emulate NAND_CMD_READOOB on large-page chips */
 	if (command == NAND_CMD_READOOB) {
-		if (mtd->writesize > 512) {
+		if (mtd->writesize > 512) 
+		  {
 			uint8_t buf[2048];
 
 			memset (buf, 0xff, sizeof(buf));
 			column += mtd->writesize;
-	//		printk("---------123----------------\n");
 			umc_nand_page_rd (GET_SC(mtd), CHIP_SEL, PAGE_ADDRESS(page), 
 					  dev_width, rd_addr_cyc, buf, mtd->writesize);
-		//	printk("---------456----------------\n");
 			umc_random_data_rd_cmd(GET_SC(mtd), CHIP_SEL, column, dev_width , 
 						   rand_op_addr_cyc);
 			udelay(25);
@@ -1525,14 +1538,14 @@ static void bcm5892_cmdfunc(struct mtd_info *mtd,unsigned command,int column, in
 		//	printk(KERN_ERR "Write_sz= %d\n",mtd->writesize);	
 			umc_smallnand_page_rd_cmd (sc, CHIP_SEL, PAGE_ADDRESS(page),
 						   dev_width, rd_addr_cyc);
-			printk("lee write----->mtd->writesize=512\n");
 		}
-		else
-		{
-			umc_nand_page_rd_cmd (sc, CHIP_SEL, PAGE_ADDRESS(page), dev_width, rd_addr_cyc);
+		else{
 
-	//		umc_nand_page_rd_cmd (sc, CHIP_SEL, PAGE_ADDRESS(page), 
-	//				      dev_width, 2);
+  	//		printk("lee large nand page read start \n");
+
+			umc_nand_page_rd_cmd (sc, CHIP_SEL, PAGE_ADDRESS(page), 
+					      dev_width, rd_addr_cyc);
+
 		}	
 		udelay(25); 
 		timeout = 0x3000;
@@ -1548,13 +1561,21 @@ static void bcm5892_cmdfunc(struct mtd_info *mtd,unsigned command,int column, in
 		break;
 	case NAND_CMD_SEQIN:
 		if (mtd->writesize == 512) 
+		{
+
+//			printk("lee small nand page prg\n");
 			umc_smallnand_page_prg_start (sc, CHIP_SEL, PAGE_ADDRESS(page),
 						      dev_width, prg_addr_cyc);
+		}
 		else
+		{
 			umc_nand_page_prg_start(sc, CHIP_SEL, PAGE_ADDRESS(page), dev_width, 
-						prg_addr_cyc);		
+						prg_addr_cyc);
+//			printk("lee large nand page prg\n");
+		}		
 		break;
 	case NAND_CMD_READSTART:
+//		printk("large nand page read end lee\n");
 		ret = umc_nand_page_rd_end(sc, CHIP_SEL);
 		break;
 	case NAND_CMD_PAGEPROG:
@@ -1569,7 +1590,6 @@ static void bcm5892_cmdfunc(struct mtd_info *mtd,unsigned command,int column, in
 	}// end of switch		
 	sc->state = STATE_READY;
 }
-
 static void flash_init (struct bcm5892_nand_softc* sc)
 {
 	//Enable the UMC block in the DMU
@@ -1577,20 +1597,37 @@ static void flash_init (struct bcm5892_nand_softc* sc)
 	
 	//Configure the UMC
 	if (dev_width == 16)
+	{
+
+//		printk("umc_memif_cfg dev_width 16 \n");
 		umc_memif_cfg(sc, TYPE_SRAM_NONMUXED,CHIPS_2, WIDTH_16, 
 			      TYPE_NAND, CHIPS_1, WIDTH_16);
-	else if (dev_width == 8)
-		umc_memif_cfg(sc, TYPE_SRAM_NONMUXED,CHIPS_2, WIDTH_8, 
-		      TYPE_NAND, CHIPS_1, WIDTH_8);
+	
 
+	}
+	else if (dev_width == 8)
+	{
+//		printk("lee umc_memif_cfg device with 8\n");
+
+		umc_memif_cfg(sc, TYPE_SRAM_NONMUXED,CHIPS_2, WIDTH_8, 
+		      TYPE_NAND, CHIPS_1, WIDTH_8);  //以前为8 changed by lee
+
+
+	}
 	// device types on cs : cs2 : SRAM/NOR cs1:SRAM/NOR cs0:NAND
 	umc_config_cs_type(sc, CS_SRAM, CS_NAND, CS_SRAM );
 
 	if (dev_width == 16)
-		umc_config_cs (sc, CHIP_SELECT,INTERFACE_1,0,0,0,0,WIDTH_16);
-	else if (dev_width == 8)
-		umc_config_cs (sc, CHIP_SELECT,INTERFACE_1,0,0,0,0,WIDTH_8);
+	{
 
+	//	printk("lee umc_config_cs device width 16\n");
+		umc_config_cs (sc, CHIP_SELECT,INTERFACE_1,0,0,0,0,WIDTH_16);
+	}
+	else if (dev_width == 8)
+	{
+	//	printk("lee umc_config_cs device width 8\n");
+		umc_config_cs (sc, CHIP_SELECT,INTERFACE_1,0,0,0,0,WIDTH_8);  //I think it's ok
+	}
 
 	 umc_int_enable(sc, 1, 1, 1, 1); 
 }
@@ -1633,27 +1670,26 @@ static int bcm5892_nand_init_chip (struct bcm5892_nand_softc *sc)
 			mtd->name = (char *)"bcm5892_nand_chip_on_umc";
 	}
 
-	manuf_id = sc->read_id & 0xff;
+	//manuf_id = sc->read_id & 0xff;
+	manuf_id = 0xda;
 	if (manuf_id == 0x2c)		// Micron
 		sv_umc_nand_set_cycles(sc,2,1,1,3,2,5,7);
-        else if(manuf_id == 0xda)       // Micron 2G            ----->add by lee
-
-                sv_umc_nand_set_cycles(sc,2,1,1,3,1,4,6);
-                //sv_umc_nand_set_cycles(sc,2,1,1,3,2,5,7);
-	 //	sv_umc_nand_set_cycles(sc,3,2,2,4,3,6,7);
 	else if (manuf_id == 0x20)	// ST Micro
 		sv_umc_nand_set_cycles(sc,3,2,2,4,3,6,7);
 	else if ((manuf_id == 0xEC) && (sc->read_id ==0x76))	// Samsung
 		sv_umc_nand_set_cycles(sc,2,1,1,3,2,5,6);
 	else if ((manuf_id == 0xEC) && (sc->read_id == 0x75))	// Samsung
 		sv_umc_nand_set_cycles(sc,2,1,1,2,2,4,5);
-
+	else if (manuf_id == 0xda)    //Micro 2G  add by lee
+		sv_umc_nand_set_cycles(sc,2,1,1,3,1,4,6);
+//		sv_umc_nand_set_cycles(sc,3,2,2,4,3,6,7);
 	nand->ecc.mode = NAND_ECC_HW;
 
 	nand->cmd_ctrl	= bcm5892_hwcontrol;
 	nand->ecc.write_oob = bcm5892_write_oob;
 
-	if (nand->ecc.mode == NAND_ECC_HW) {
+	if (nand->ecc.mode == NAND_ECC_HW) 
+	{
 		nand->ecc.bytes = 3;
 		nand->ecc.size = 512;
 		nand->ecc.read_page = bcm5892_read_page_hwecc;
@@ -1664,18 +1700,26 @@ static int bcm5892_nand_init_chip (struct bcm5892_nand_softc *sc)
 		if (mtd->writesize == 512) 
 			umc_ecc_config(sc, ECC_NOJUMP, ECC_RD_END, ECC_ENABLE, 
 				       ECC_PAGE_512); 
-		else if (mtd->writesize == 2048) 
+		else if (mtd->writesize == 2048)
+		{
+		 
+	//		printk("lee large nand ecc\n");
 			umc_ecc_config(sc, ECC_NOJUMP, ECC_RD_END, ECC_ENABLE, 
-				       ECC_PAGE_2048); 
+				       ECC_PAGE_2048);
+		} 
 	}
 
 	nand->options |= NAND_USE_FLASH_BBT; 
 	/* setup bbt descr */
 	if (mtd->writesize == 512) {
+	//	printk("lee small nand bbt\n");
 		nand->bbt_td = &bcm5892_bbt_main_descr_512;
 		nand->bbt_md = &bcm5892_bbt_mirr_descr_512;
 		nand->ecc.layout = &bcm5892_oobinfo_512;
-	} else {
+	}
+	else 
+	{
+	//	printk("lee large nand bbt\n");
 		nand->bbt_td = &bcm5892_bbt_main_descr_2048;
 		nand->bbt_md = &bcm5892_bbt_mirr_descr_2048;
 		nand->ecc.layout = &bcm5892_oobinfo_2048;
@@ -1835,17 +1879,11 @@ static int bcm5892_nand_drv_remove (struct amba_device *dev)
 
 	return 0;
 }
-/*
 #ifdef CONFIG_PM
 static int bcm5892_nand_suspend(struct amba_device *dev, pm_message_t state)
 {
 	struct bcm5892_nand_softc *sc = amba_get_drvdata (dev);
 
-
-	printk("=====================1==============\n");
-	printk("=====================1==============\n");
-	printk("=====================1==============\n");
-	printk("=====================1==============\n");
         if (sc->state != STATE_READY) {
                 printk(KERN_ERR "%s: driver busy\n", module_id);
                 return -EAGAIN;
@@ -1856,19 +1894,13 @@ static int bcm5892_nand_suspend(struct amba_device *dev, pm_message_t state)
 
 static int bcm5892_nand_resume(struct amba_device *dev)
 {
-	printk("====================================\n");
-	printk("====================================\n");
-	printk("====================================\n");
-	printk("====================================\n");
         return 0;
 }
 #else
 #define bcm5892_nand_suspend     NULL
 #define bcm5892_nand_resume      NULL
 #endif
-*/
-#define bcm5892_nand_suspend     NULL
-#define bcm5892_nand_resume      NULL
+
 static struct amba_id bcm5892nand_ids[] __initdata = {
 	{
 		.id	= 0x00041353,

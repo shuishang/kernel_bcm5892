@@ -68,6 +68,12 @@ struct uart_port_bcm5892 {
 	struct uart_port	port;
 	unsigned int		im;	/* interrupt mask */
 	unsigned int		old_status;
+	/* Enable/disable automatic hardware flow control as requested by the
+     * termios.  The controller does not allow us to control the RTS line when
+     * auto-RTS is enabled, so we enable auto-RTS only if the kernel has not
+     * disabled RTS.
+	 */
+	 bool			    autorts; 
 };
 
 static void bcm5892uart_stop_tx(struct uart_port *port)
@@ -319,6 +325,12 @@ static void bcm5892uart_set_mctrl(struct uart_port *port, unsigned int mctrl)
 	TIOCMBIT(TIOCM_OUT1, UART011_CR_OUT1);
 	TIOCMBIT(TIOCM_OUT2, UART011_CR_OUT2);
 	TIOCMBIT(TIOCM_LOOP, UART011_CR_LBE);
+
+    if (uap->autorts) {
+		/* We need to disable auto-RTS if we want to turn RTS off */
+		TIOCMBIT(TIOCM_RTS, UART011_CR_RTSEN);
+    }
+
 #undef TIOCMBIT
 #else
 #define	BIT(tiocmbit, uartbit)		\
@@ -371,6 +383,8 @@ static int bcm5892uart_startup(struct uart_port *port)
 	writew(UART011_IFLS_RX4_8|UART011_IFLS_TX4_8,
 	       uap->port.membase + UART011_IFLS);
 
+	printk("uap->port.membase :%x\n",uap->port.membase);
+
 	/*
 	 * Provoke TX FIFO interrupt into asserting.
 	 */
@@ -379,11 +393,27 @@ static int bcm5892uart_startup(struct uart_port *port)
 	writew(0, uap->port.membase + UART011_FBRD);
 	writew(1, uap->port.membase + UART011_IBRD);
 	writew(0, uap->port.membase + UART011_LCRH);
+
+#define UART011_TCR       0x080 /* Test Control Register */
+#define UART011_TCR_ITEN  0x00  /* Test Control Register - Integration test enable bit */
+#define UART011_ITOP      0x088 /* Integration Test Output Register */
+#define UART011_ITOP_TXD  0x00  /* Integration Test Output Register - Specify TX pin value bit */
+ 
+	/* Set Tx line to be '1' in test mode - Solves Tx pulse sent at COM Open in the original driver */
+	writew(1 << UART011_ITOP_TXD, uap->port.membase + UART011_ITOP);
+	/* Enable test mode */
+	writew(1 << UART011_TCR_ITEN, uap->port.membase + UART011_TCR);
+
 	writew(0, uap->port.membase + UART01x_DR);
 	while (readw(uap->port.membase + UART01x_FR) & UART01x_FR_BUSY)
 		barrier();
 
-	cr = UART011_CR_CTSEN | UART011_CR_RTSEN;
+	/* Disable test mode */
+	writew(0 << UART011_TCR_ITEN, uap->port.membase + UART011_TCR);
+
+	//ljj delete ,no flow control
+	//cr = UART011_CR_CTSEN | UART011_CR_RTSEN;
+	cr = 0;
 	cr |= UART01x_CR_UARTEN | UART011_CR_RXE | UART011_CR_TXE;
 	writew(cr, uap->port.membase + UART011_CR);
 
@@ -425,6 +455,7 @@ static void bcm5892uart_shutdown(struct uart_port *port)
 	/*
 	 * disable the port
 	 */
+	uap->autorts = 0; 
 	writew(UART01x_CR_UARTEN | UART011_CR_TXE, uap->port.membase + UART011_CR);
 
 	/*
@@ -439,6 +470,7 @@ static void
 bcm5892uart_set_termios(struct uart_port *port, struct ktermios *termios,
 		     struct ktermios *old)
 {
+	struct uart_port_bcm5892 *uap = (struct uart_port_bcm5892 *)port;
 	unsigned int lcr_h, old_cr;
 	unsigned long flags;
 	unsigned int baud, quot;
@@ -514,6 +546,17 @@ bcm5892uart_set_termios(struct uart_port *port, struct ktermios *termios,
 	/* first, disable everything */
 	old_cr = readw(port->membase + UART011_CR);
 	writew(0, port->membase + UART011_CR);
+
+	if (termios->c_cflag & CRTSCTS) {
+        if (old_cr & UART011_CR_RTS)
+			old_cr |= UART011_CR_RTSEN;
+
+		old_cr |= UART011_CR_CTSEN;
+		uap->autorts = 1;
+	} else {
+		old_cr &= ~(UART011_CR_CTSEN | UART011_CR_RTSEN);
+        uap->autorts = 0; 
+	}
 
 	/* Set baud rate */
 	writew(quot & 0x3f, port->membase + UART011_FBRD);
@@ -759,7 +802,7 @@ static int __init bcm5892uart_console_setup(struct console *co, char *options)
 	else
 		bcm5892uart_console_get_options(uap, &baud, &parity, &bits);
 
-	return uart_set_options(&uap->port, co, baud, parity, bits, flow);
+	return uart_set_options((struct uart_port *)uap, co, baud, parity, bits, flow);
 }
 
 static struct uart_driver amba_reg;
