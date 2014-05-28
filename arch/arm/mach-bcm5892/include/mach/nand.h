@@ -53,6 +53,7 @@
 
 /* Dev IDs*/
 #define MICRON_1G_16BIT	0xB1
+#define  MICRON_2G_8BIT  0xda
 #define STMICRO_2G_8BIT	0xAA
 #define STMICRO_1G_8BIT	0xA1
 #define SAMSUNG_64MB_8BIT	0x76

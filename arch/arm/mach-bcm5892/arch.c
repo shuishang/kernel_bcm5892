@@ -399,12 +399,13 @@ static struct amba_device dma_amba_device = {
 
 
 static struct amba_device *amba_devs[] __initdata = {
+	&umc_nand_device,
 	&uart0_device,
 	&uart1_device,
 	&uart2_device,
 	&uart3_device,
 	&open_wdt_device,
-	&umc_nand_device,
+//	&umc_nand_device,
 	&spi0_amba_device,
 	&spi1_amba_device,
 	&spi3_amba_device,

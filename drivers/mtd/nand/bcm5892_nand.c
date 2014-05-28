@@ -64,9 +64,9 @@ static struct mtd_partition BCM5892_nand_partition [] = {
 	.offset		=  0x0,
 },           
 {
-	.name		= "jffs2",
+	.name		= "yaffs2",
 	.size		= 0x1E00000,	// 30MB
-	.offset		=  0x1000000,
+	.offset		= 0x1000000,
 },
 {
 	.name		= "NAND-block2",
@@ -179,6 +179,7 @@ static uint32_t umc_nand_word_rd (struct bcm5892_nand_softc *sc, uint8_t cs)
                 | ( NAND_PAGE_RD_E_CMD << 11)
                 | ( 1 << 19)     // Data Phase
 		;
+//	printk("0000000\n");
 	return  readl (addr);
 }
 
@@ -285,6 +286,23 @@ static void umc_nand_readid_cmd(struct bcm5892_nand_softc *sc, uint32_t cs,
 		nand->options	|= NAND_BUSWIDTH_16;		
 		break;
 
+	case MICRON_2G_8BIT:
+		printk("MICRON_2G_8BIT config param lee\n");
+/*
+		rd_addr_cyc	= 5;
+		prg_addr_cyc	= 5;
+		rand_op_addr_cyc = 5;	
+		pg_addr_shift	= 12;
+		dev_width = 8;		//add by lee
+//		nand->options	|= NAND_BUSWIDTH_16; //del by lee		
+*/
+		rd_addr_cyc	= 5;
+		prg_addr_cyc	= 5;
+		pg_addr_shift	= 12;
+		dev_width = 8;
+		break;
+
+		break;
 	case STMICRO_2G_8BIT:
 		rd_addr_cyc	= 5;
 		prg_addr_cyc	= 5;
@@ -683,7 +701,35 @@ static void umc_nand_page_rd_cmd( struct bcm5892_nand_softc *sc, uint32_t cs,
 		dev_ad_byte[4] = ( width == 8) ? 
 			(address >> 28) & 0x01 : (address >> 28) & 0x03;
 
-	}
+	}else if(manuf_id == 0xda){ //for Micron 2Gb    add by lee
+
+          	dev_ad_byte[0] = ( width == 8) ? (address) & 0xff :
+                               (address >>  1) & 0xff; // CA[7:0]
+          	dev_ad_byte[1] = ( width == 8) ? (address >>  8) & 0x0f :
+                               (address >>  9) & 0x07; // CA[10:8]
+          	dev_ad_byte[2] = ( width == 8) ? (address >> 12) & 0xff :
+                               (address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
+          	dev_ad_byte[3] = ( width == 8) ? (address >> 20) & 0xff :
+                               (address >> 20) & 0xff;
+          	dev_ad_byte[4] = ( width == 8) ? (address >> 28) & 0x03 :
+                               (address >> 28) & 0x03;
+		printk("manuf_id==0xda read  add by lee\n");
+
+/*
+		dev_ad_byte[0] = ( width == 8) ? 
+			(address) & 0xff : (address >>  1) & 0xff; // CA[7:0]
+		dev_ad_byte[1] = ( width == 8) ? 
+			(address >>  8) & 0x0f : (address >>  9) & 0x07; // CA[10:8]
+		dev_ad_byte[2] = ( width == 8) ? 
+			(address >> 12) & 0xff : (address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
+		dev_ad_byte[3] = ( width == 8) ? 
+			(address >> 20) & 0xff : (address >> 20) & 0xff;
+		dev_ad_byte[4] = ( width == 8) ? 
+			(address >> 28) & 0x01 : (address >> 28) & 0x03;
+
+*/
+        }
+
 
 	device_addr1 = (dev_ad_byte[3] << 24) |
 		(dev_ad_byte[2] << 16) |
@@ -705,6 +751,7 @@ static void umc_nand_page_rd_cmd( struct bcm5892_nand_softc *sc, uint32_t cs,
 	writel (device_addr1,addr);
 
 	PDEBUG ("NAND Page Read Command Issue :  0x%x : 0x%x 0x%x\n", address,device_addr1, device_addr2);
+//	printk ("NAND Page Read Command Issue :  0x%x : 0x%x 0x%x\n", address,device_addr1, device_addr2);
 
 	if (no_addr_cycles == 5)
 		writel (device_addr2, addr);
@@ -739,16 +786,21 @@ static void umc_nand_page_rd(struct bcm5892_nand_softc *sc, uint32_t cs,
 		printk(KERN_ERR "%s: %d Critical Error: HW Read operation FAILED!!!\n",
 		       __func__, __LINE__);
 
+//	printk("---------------1----------------------------\n");
 	num_of_words = bytesize/4;
 	for ( i = 0 ; i <  num_of_words; i++) 
 	{
 		data = umc_nand_word_rd(sc,cs);
+	//	printk("0000111000\n");
 		*((uint32_t*)dst_ptr) = data;
 		dst_ptr += 4;
+
 	}
 
+//	printk("---------------2----------------------------\n");
 	data = umc_nand_page_rd_end( sc, cs);
 	writel ( data, dst_ptr);
+//	printk("--------------------------------------------\n");
 }
 
 // ----------------------------------------------------------------------------
@@ -789,7 +841,32 @@ static void umc_nand_page_prg_start( struct bcm5892_nand_softc *sc,
 			(address >> 24) & 0xff;
 		dev_ad_byte[4] = ( width == 8) ? (address >> 28) & 0x03 : 
 			(address >> 26) & 0x03;
-	}
+	}else if(manuf_id == 0xda){// Micron  2G       //add by lee
+
+        	dev_ad_byte[0] = ( width == 8) ? (address) & 0xff :     //
+                           (address >>  1) & 0xff; // CA[7:0]
+        	dev_ad_byte[1] = ( width == 8) ? (address >>  8) & 0x0f :  //
+                           (address >>  9) & 0x07; // CA[10:8]
+        	dev_ad_byte[2] = ( width == 8) ? (address >> 12) & 0xff :
+                           (address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
+        	dev_ad_byte[3] = ( width == 8) ? (address >> 20) & 0xff :
+                           (address >> 20) & 0xff;
+        	dev_ad_byte[4] = ( width == 8) ? (address >> 28) & 0x03 :
+                           (address >> 28) & 0x03;
+
+/*
+		dev_ad_byte[0] = ( width == 8) ? (address) & 0xff : 
+			(address >>  1) & 0xff; // CA[7:0]
+		dev_ad_byte[1] = ( width == 8) ? (address >>  8) & 0x0f : 
+			(address >>  9) & 0x07; // CA[10:8]
+		dev_ad_byte[2] = ( width == 8) ? (address >> 12) & 0xff : 
+			(address >> 12) & 0xff; // {BA[1:0],PA[5:0]}
+		dev_ad_byte[3] = ( width == 8) ? (address >> 20) & 0xff : 
+			(address >> 20) & 0xff;
+		dev_ad_byte[4] = (width == 8) ? (address >> 28) & 0x01 : 
+					(address >> 28) & 0x03;
+*/
+        }
 
 	device_addr1 = (dev_ad_byte[3] << 24) |
 		(dev_ad_byte[2] << 16) |
@@ -951,6 +1028,7 @@ static int block_checkbad(struct mtd_info *mtd, loff_t off)
 		column =  chip->badblockpos;
 
 		if (chip->options & NAND_BUSWIDTH_16) {
+			printk("chip->cmdfunc(mtd, NAND_CMD_READOOB, chip->badblockpos & 0xFE,page)\n");
 			chip->cmdfunc(mtd, NAND_CMD_READOOB, chip->badblockpos & 0xFE,
 				      page);
 			bad = chip->read_word(mtd);
@@ -959,6 +1037,7 @@ static int block_checkbad(struct mtd_info *mtd, loff_t off)
 			if ((bad & 0xFF) != 0xff)
 				ret = 1;
 		} else {
+			printk("chip->cmdfunc(mtd, NAND_CMD_READOOB, chip->badblockpos, page)\n");
 			chip->cmdfunc(mtd, NAND_CMD_READOOB, chip->badblockpos, page);
 			if (chip->read_byte(mtd) != 0xff)
 				ret = 1;
@@ -1422,8 +1501,10 @@ static void bcm5892_cmdfunc(struct mtd_info *mtd,unsigned command,int column, in
 
 			memset (buf, 0xff, sizeof(buf));
 			column += mtd->writesize;
+	//		printk("---------123----------------\n");
 			umc_nand_page_rd (GET_SC(mtd), CHIP_SEL, PAGE_ADDRESS(page), 
 					  dev_width, rd_addr_cyc, buf, mtd->writesize);
+		//	printk("---------456----------------\n");
 			umc_random_data_rd_cmd(GET_SC(mtd), CHIP_SEL, column, dev_width , 
 						   rand_op_addr_cyc);
 			udelay(25);
@@ -1444,10 +1525,15 @@ static void bcm5892_cmdfunc(struct mtd_info *mtd,unsigned command,int column, in
 		//	printk(KERN_ERR "Write_sz= %d\n",mtd->writesize);	
 			umc_smallnand_page_rd_cmd (sc, CHIP_SEL, PAGE_ADDRESS(page),
 						   dev_width, rd_addr_cyc);
+			printk("lee write----->mtd->writesize=512\n");
 		}
 		else
-			umc_nand_page_rd_cmd (sc, CHIP_SEL, PAGE_ADDRESS(page), 
-					      dev_width, rd_addr_cyc);	
+		{
+			umc_nand_page_rd_cmd (sc, CHIP_SEL, PAGE_ADDRESS(page), dev_width, rd_addr_cyc);
+
+	//		umc_nand_page_rd_cmd (sc, CHIP_SEL, PAGE_ADDRESS(page), 
+	//				      dev_width, 2);
+		}	
 		udelay(25); 
 		timeout = 0x3000;
 #define INT_STATUS ((*(volatile uint32_t *)sc->pUMC_R_umc_status_reg)&(1<<6))
@@ -1550,6 +1636,11 @@ static int bcm5892_nand_init_chip (struct bcm5892_nand_softc *sc)
 	manuf_id = sc->read_id & 0xff;
 	if (manuf_id == 0x2c)		// Micron
 		sv_umc_nand_set_cycles(sc,2,1,1,3,2,5,7);
+        else if(manuf_id == 0xda)       // Micron 2G            ----->add by lee
+
+                sv_umc_nand_set_cycles(sc,2,1,1,3,1,4,6);
+                //sv_umc_nand_set_cycles(sc,2,1,1,3,2,5,7);
+	 //	sv_umc_nand_set_cycles(sc,3,2,2,4,3,6,7);
 	else if (manuf_id == 0x20)	// ST Micro
 		sv_umc_nand_set_cycles(sc,3,2,2,4,3,6,7);
 	else if ((manuf_id == 0xEC) && (sc->read_id ==0x76))	// Samsung
@@ -1744,11 +1835,17 @@ static int bcm5892_nand_drv_remove (struct amba_device *dev)
 
 	return 0;
 }
+/*
 #ifdef CONFIG_PM
 static int bcm5892_nand_suspend(struct amba_device *dev, pm_message_t state)
 {
 	struct bcm5892_nand_softc *sc = amba_get_drvdata (dev);
 
+
+	printk("=====================1==============\n");
+	printk("=====================1==============\n");
+	printk("=====================1==============\n");
+	printk("=====================1==============\n");
         if (sc->state != STATE_READY) {
                 printk(KERN_ERR "%s: driver busy\n", module_id);
                 return -EAGAIN;
@@ -1759,13 +1856,19 @@ static int bcm5892_nand_suspend(struct amba_device *dev, pm_message_t state)
 
 static int bcm5892_nand_resume(struct amba_device *dev)
 {
+	printk("====================================\n");
+	printk("====================================\n");
+	printk("====================================\n");
+	printk("====================================\n");
         return 0;
 }
 #else
 #define bcm5892_nand_suspend     NULL
 #define bcm5892_nand_resume      NULL
 #endif
-
+*/
+#define bcm5892_nand_suspend     NULL
+#define bcm5892_nand_resume      NULL
 static struct amba_id bcm5892nand_ids[] __initdata = {
 	{
 		.id	= 0x00041353,
