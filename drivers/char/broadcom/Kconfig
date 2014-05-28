@@ -1,0 +1,360 @@
+#
+# Miscellaneous Broadcom device configuration
+#
+
+config BCM_DEBUG_PAUSE
+    bool
+    default n
+
+config BCM_HAVE_PROC_GPIO
+    bool
+    help
+       Platforms select HAVE_PROC_GPIO if they want the /proc/sys/gpio directory to
+       show up.
+
+menu "Broadcom Miscellaneous Devices"
+
+config BCM_LCD_BACKLIGHT
+    bool "LCD Backlight Support"
+    default n
+
+config BCM_GOS
+    bool "Generic OS (GOS) Abstraction Layer"
+    default y
+    ---help---
+    Say Y to enable the GOS abstraction layer
+
+config BCM_AMXR
+    bool "Audio Mixer Driver support"
+    select BCM_GOS
+    default y
+    ---help---
+    Say Y to enable the Audio Mixer Driver to support interconnecting
+    audio samples between kernel objects.
+
+config BCM_HALAUDIO
+    bool "HAL Audio Driver support"
+    select BCM_AMXR
+    select BCM_GOS
+    default y
+    ---help---
+    Say Y to enable HAL Audio Driver support which is used to control
+    audio hardware.
+
+config BCM_ALSA
+    tristate "ALSA Character driver"
+    depends on SND
+    default n
+    ---help---
+    Select to build the ALSA Character driver.
+
+config BCM_EPTDRIVER_SUPPORT
+    bool "Endpoint Driver Support"
+    select BCM_HALAUDIO
+    select BCM_AMXR
+    select BCM_GOS
+    default y
+    ---help---
+    Say Y to enable Endpoint Driver support.
+
+config BCM_GIST
+    tristate "Generic I/O Streaming (GIST)"
+    default n
+    ---help---
+    This utility provides low latency non-blocking reads from and writes to files.
+
+config BCM_SIGMORPH
+    tristate "Audio Packet Processing"
+    default n
+    ---help---
+    Codec Streaming eXtensions interface to attenuate/mix audio
+
+config BCM_CSX
+    tristate "CSX Audio Debug Framework"
+    default n
+    ---help---
+    CSX codec streaming extentions to inject/capture media packets, PCM data, etc.
+
+config BCM_CSX_GIST
+    tristate "CSX to GIST utility interface"
+    select BCM_CSX
+    default n
+    ---help---
+    CSX codec streaming extentions interface to GIST debugging tool.
+
+config BCM_CSX_HALAUDIO
+    tristate "CSX to HAL Audio module interface"
+    select BCM_CSX
+    default n
+    depends on BCM_HALAUDIO
+    ---help---
+    CSX codec streaming extentions interface to HAL Audio module.
+
+config BCM_CSX_SIGMORPH
+    tristate "CSX to SIGMORPH utility interface"
+    select BCM_CSX
+    default n
+    ---help---
+    Codec Streaming eXtensions interface to SIGMORPH debugging tool.
+
+config BCM_KNLLOG_SUPPORT
+    bool "Knllog Logging Support"
+    default y
+    ---help---
+    Knllog provides a ring buffer to print out content during a crash.
+
+config BCM_KNLLOG_IRQ
+    bool "KNLLOG of IRQs Debugging"
+    default n
+    depends on BCM_KNLLOG_SUPPORT
+    ---help---
+    Enable Logging of IRQs, tasks, and tasklets - for DEBUG only.
+
+config BCM_PERFCNT_SUPPORT
+    bool "Hardware Performance Counter Support"
+    default y
+    ---help---
+    perfcnt is a simplified hardware performance counter interface for arm11 chips.
+
+config BCM_PERFTEST_SUPPORT
+    bool "Hardware Performance Counter Test Support"
+    default n
+    depends on BCM_PERFCNT_SUPPORT
+    ---help---
+    perftest is used to test the perfcnt.
+
+config BCM_BUS_ARBITER
+    bool "Programmable Bus Arbiter (HPM)"
+    default y
+    ---help---
+    Enable a simple proc/sys interface to program the arm11 HPM.
+
+config BCM_PMU
+    bool "PMU Chip Support"
+    default y
+    ---help---
+    Support for Power Management Chips
+
+config BCM_PMU_BCM59001
+    bool "BCM59001 PMU Support"
+    default n
+    depends on BCM_PMU
+    depends on I2C
+    ---help---
+    Support for the BCM59001 Power Management Chip
+
+config BCM_PMU_BCM59035_B0
+    bool "BCM59035_B0 PMU Support"
+    default n
+    depends on BCM_PMU
+    depends on I2C
+    ---help---
+    Support for the BCM59035_B0 Power Management Chip
+
+config BCM_PMU_PCF506XX
+    bool "PCF506XX PMU Support"
+    default n
+    depends on BCM_PMU
+    depends on I2C
+    ---help---
+    Support for the PCF50603 and PCF50611 Power Management Chips
+
+config BCM_POWER_MANAGER
+    bool "Power Manager"
+    default y
+    depends on BCM_PMU
+    ---help---
+    Include the Power Manager.
+
+config BCM_BATTERY_MANAGER
+    bool "Battery Manager"
+    default n
+    depends on BCM_POWER_MANAGER
+    ---help---
+    Include the Battery Management portion of Power Manager.
+
+config BCM_VCHIQ
+    tristate "VCHIQ driver"
+    ---help---
+    Indicates if you're using the new VCHIQ driver.
+
+config BCM_VCHIQ_VC03
+    tristate "VCHIQ driver"
+    depends on BCM_VCHIQ
+    ---help---
+    Indicates if you're using the new VCHIQ driver with the VC03.
+
+config BCM_VCHIQ_VC04
+    tristate "VC04 VCHIQ driver"
+    depends on BCM_VCHIQ
+    ---help---
+    Indicates if you're using the new VCHIQ driver with the VC04.
+
+config BCM_MAX_EXTERNAL_VIDEOCORES
+    int "Maximum number of External Videocores (1-2)"
+    range 0 2
+    default "2"
+    depends on BCM_VCHIQ
+    ---help---
+    Indicates the maximum number of external videocores supported by driver/gpios.
+
+config BCM_LCD_PERF
+    bool "Display CPU stats on bottom of LCD"
+    ---help---
+    Say Y to cause the bottom two scan lines of the LCD to be used for displaying
+    a CPU performance meter.
+
+config BCM_IDLE_PROFILER_SUPPORT
+    bool "Enable idle cycles profiling"
+    depends on ARCH_BCM116X || ARCH_BCMRING
+    default y
+    help
+      Maintain a counter of ticks spent in idle state.
+      
+config BCM_FRAME_PROFILER_SUPPORT
+    bool "Enable frame profiling"
+    depends on ARCH_BCM116X || ARCH_BCMRING
+    default y
+    help
+      Maintain a history of time spent processing frames.      
+
+config BCM_SLEEP_MODE
+    bool "Sleep Mode Control"
+    depends on ARCH_BCM116X
+    ---help---
+    Include the Sleep Mode Control
+
+config BCM_OTP
+    tristate "OTP Driver"
+    ---help---
+    This driver provides access to the One-Time Programmable (OTP) memory.
+
+config BCM_GPIO_DRIVER
+     tristate "GPIO driver"
+     default y
+     ---help---
+     This driver allows user mode program to get access to GPIO pins.
+
+config BCM_4325_DRIVER
+     tristate "BCM4325 Initialization Driver"
+     default n
+     ---help---
+     This sets up the GPIOs for Wireless LAN and Bluetooth in BCM4325.
+
+config BCM_HALAUDIO_PLATFORM
+    bool "HAL Audio Platform extensions"
+    default n
+    depends on BCM_HALAUDIO
+    ---help---
+    Choose to enable optional HAL Audio platform extensions. For example, these
+    extensions may be used to control GPIO's for external op-amps.
+
+config BCM_HALAUDIO_ALSA
+    tristate "HAL Audio ALSA driver"
+    default n
+    depends on BCM_HALAUDIO
+    depends on SND
+    select USB
+    ---help---
+    Select to build the HAL Audio ALSA driver.
+
+config BCM_HALAUDIO_USB
+    tristate "HAL Audio USB driver"
+    default n
+    depends on BCM_HALAUDIO
+    select USB
+    ---help---
+    Select m to build the generic HAL Audio USB driver. This driver must be
+    built as a loadable module otherwise initialization will fail.
+
+config BCM_HALAUDIO_EXTERNAL_AK4642
+    tristate "HAL Audio External AK4642"
+    default n
+    depends on BCM_HALAUDIO
+    ---help---
+    This driver is used with HAL Audio to provide external AK4642 support.
+
+config BCM_HALAUDIO_EXTERNAL_AK4642_I2C_TEST
+    bool "External AK4642 I2C test"
+    default n
+    depends on BCM_HALAUDIO_EXTERNAL_AK4642
+    ---help---
+    I2C test using the external AK4642 codec.
+
+config BCM_HALAUDIO_APM_BCMRING
+    tristate "HAL Audio APM driver for the BCMRING Chip family"
+    default n
+    depends on BCM_HALAUDIO
+    depends on ARCH_BCMRING
+    ---help---
+    Select m to build the HAL Audio APM driver for the BCMRING Chip
+    family. This driver must be built as a loadable module otherwise
+    initialization will fail.
+
+config BCM_HALAUDIO_APM_DISABLE_22_44_KHZ
+    bool "HAL Audio APM driver for the BCMRING Chip family"
+    default n
+    depends on BCM_HALAUDIO_APM_BCMRING
+    ---help---
+    Select y to disable 22.05 and 44.1 kHz sampling rates.  This can be removed
+    once audio infrastructure resamples to/from 16 kHz.
+
+config BCM_HALAUDIO_I2S_BCMRING
+    tristate "HAL Audio I2S driver for the BCMRING Chip family"
+    default n
+    depends on BCM_HALAUDIO
+    depends on ARCH_BCMRING
+    ---help---
+    Select m to build the HAL Audio I2S driver for the BCMRING Chip
+    family. This driver must be built as a loadable module otherwise
+    initialization will fail. The default driver controls the external
+    AK4642 codec. CONFIG_BCM_HALAUDIO_EXTERNAL_AK4642 should be selected.
+
+config BCM_HALAUDIO_PCM_BCMRING
+    tristate "HAL Audio PCM driver for the BCMRING Chip family"
+    default n
+    depends on BCM_HALAUDIO
+    depends on ARCH_BCMRING
+    ---help---
+    Select m to build the HAL Audio PCM driver for the BCMRING Chip
+    family. This driver must be built as a loadable module otherwise
+    initialization will fail.
+
+config BCM_TIMBIT
+    bool "Timbit"
+    default n
+    ---help---
+    This selects the timbit configuration build.
+
+config BCM_BSC
+    bool "Board Specific Configuration (BSC) driver support"
+    default y
+    ---help---
+    Say Y to enable the BSC support.
+
+config VDEC
+    bool "VDEC support"
+    default n
+    ---help---
+    Say Y to enable the VDEC support.
+
+config BCM_GVR
+    tristate "Graphics/Video Renderer (GVR) driver support"
+    default n
+    ---help---
+    The GVR utilizes the BCMRING GE, MM DMA, and LCD drivers
+    to render graphics and video to the LCD
+
+config BCM_VCP
+    tristate "Video conference pipeline (VCP) driver support"
+    default n
+    ---help---
+    The VCP driver implements the API required for video conferencing.
+
+config BCM_SIGNAL_TEST
+    tristate "Test module for experimenting with signals"
+    default n
+    ---help---
+    This module can be used to explore signal handling in a kernel driver.
+
+endmenu

@@ -1,0 +1,5 @@
+config SND_BCM5892_SOC
+	tristate "SoC Audio for the Broadcom BCM5892 System-on-Chip"
+	depends on SND_SOC && ARCH_BCM5892
+	select SND_SOC_WM8750
+

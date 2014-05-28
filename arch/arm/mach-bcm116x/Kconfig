@@ -1,0 +1,87 @@
+config ARCH_SUPPORTS_BIG_ENDIAN
+	bool
+	default y
+	depends on ARCH_BCM116X
+
+choice
+	prompt "Processor selection in BCM116x family of devices"
+	depends on ARCH_BCM116X
+	default ARCH_BCM2153
+
+config ARCH_BCM2153
+	bool "BCM2153"
+endchoice
+
+config BCM2153_CPUFREQ_DRV
+    bool "CPUFREQ driver"
+    depends on ARCH_BCM2153
+
+menu "BCM116X Options"
+	depends on ARCH_BCM116X
+
+config BCM116X_EARLY_KGDB
+    bool "Use the BCM116X polling KGDB driver"
+    depends on KGDB
+    depends on ARCH_BCM116X
+    help
+       If you say Y here, then a polling version of the KGDB serial driver will
+       be used. This allows drivers that are setup prior to the serial port
+       to be debugged. If you say N here then you can choose one of KGDB's
+       builtin drivers.
+
+choice
+	prompt "Serial port for KGDB"
+	depends on BCM116X_EARLY_KGDB
+	default BCM116X_KGDB_UARTA
+
+config BCM116X_KGDB_UARTA
+	bool "UART A - Download"
+
+config BCM116X_KGDB_UARTB
+	bool "UART B - Console"
+
+endchoice
+
+choice
+    prompt "KGDB serial port BAUD"
+	depends on BCM116X_EARLY_KGDB
+	default BCM116X_KGDB_115200BAUD
+	help
+	  gdb and the kernel stub need to agree on the baud rate to be
+	  used.  Standard rates from 9600 to 115200 are allowed.
+
+config BCM116X_KGDB_9600BAUD
+	bool "9600"
+
+config BCM116X_KGDB_19200BAUD
+	bool "19200"
+
+config BCM116X_KGDB_38400BAUD
+	bool "38400"
+
+config BCM116X_KGDB_57600BAUD
+	bool "57600"
+
+config BCM116X_KGDB_115200BAUD
+	bool "115200"
+endchoice
+
+config BCM116X_DEBUG_PAUSE_KGDB
+    bool "Wait for a keypress during boot - KGDB"
+    select BCM_DEBUG_PAUSE
+    depends on BCM116X_EARLY_KGDB
+    help
+      Allows the kernel to pause during the boot process. This is a convenient
+      place to break into the kernel using KGDB since the appropriate KGDB
+      traps have been installed.
+
+config BCM116X_812K_SMTCLK
+    bool "Enable SMT clock at 812.5 kHz"
+    depends on ARCH_BCM116X
+    help
+      Run SMT clock at 812.5 kHz (for high accuracy profiling)
+
+
+endmenu
+
+source "drivers/char/bcm116x/Kconfig"

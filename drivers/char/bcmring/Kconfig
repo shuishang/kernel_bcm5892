@@ -1,0 +1,77 @@
+#
+# Miscellaneous Broadcom BCMRING device configuration
+#
+
+menu "Broadcom BCMRING Miscellaneous Devices"
+    depends on ARCH_BCMRING
+
+config BCM_LCD_BACKLIGHT
+    bool "LCD Backlight"
+    ---help---
+        Select this to include the backlight driver.
+
+        If unsure, say N.
+
+config MM_DMA
+    tristate "Multimedia DMA support"
+    ---help---
+        Select this to include the DMA utility for
+        multimedia or graphics related DMA operations.
+
+        If unsure, say N.
+
+config BCMRING_GEV3
+    tristate "Graphic Engine support"
+    select MM_DMA
+    ---help---
+        Select this to include the Graphic Engine driver.
+        The driver can be used to perform hardware-accelerated
+        graphic operations including alpha blending, rastering,
+        and color filling.
+
+        If unsure, say N.
+
+config BCMRING_LCD
+    tristate "LCD support"
+    ---help---
+        Select this to include the LCD driver.
+
+        If unsure, say N.
+
+config BCM_LCD_BPP
+    int "LCD color depth"
+    ---help---
+        use: 32 or 16.
+
+config BCMRING_VPM
+    bool "VPM support"
+    ---help---
+        Select this to include VPM support, including binary
+        file loader.
+
+        If unsure, say N.
+
+config BCMRING_ETH_LED
+    tristate "Ethernet LED support"
+	default n
+    depends on NET_BCMRING
+    ---help---
+        Select this to include LED support for BCMRING ethernet driver
+
+        If unsure, say N.
+
+config BCMRING_GPS
+    tristate "GPS support"
+	default n
+    ---help---
+        Select this to include GPS support for BCMRING
+
+        If unsure, say N.
+		
+config BCMRING_GPS_UART
+	int "GPS UART"	
+	depends on BCMRING_GPS
+	--help---
+		GPS UART port no e.g. 0,1,2,3 to be used 
+		
+endmenu

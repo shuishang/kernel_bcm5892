@@ -1,0 +1,25 @@
+#
+# vmcs services module config
+#
+
+menuconfig BRCM_VIDEOCORE_MODULES
+	tristate "Broadcom VideoCore Modules"
+	depends on PROC_FS
+	help
+	  Broadcom's VideoCore related modules
+
+config VC_OMX_KNL
+	tristate "OMX Kernel Modules"
+	depends on BRCM_VIDEOCORE_MODULES
+	default BRCM_VIDEOCORE_MODULES
+	help
+	  OMX kernel service module used by video conference applications
+
+config VC_GPIO
+	tristate "GPIO control module"
+	depends on BRCM_VIDEOCORE_MODULES
+	default BRCM_VIDEOCORE_MODULES
+	select VC_VCHIQ
+
+
+

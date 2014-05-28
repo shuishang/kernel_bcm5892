@@ -1,0 +1,111 @@
+comment "BCMRING Board Type"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_BASE
+        bool "BCMRING BASE"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_EVM
+        bool "BCMRING EVM"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_EVM_JAZZ
+        bool "BCMRING EVM JAZZ"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_EVM_RAMPAGE
+        bool "BCMRING EVM RAMPAGE"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_EVM_SEIKORA167Z
+        bool "BCMRING EVM SEIKO RA167Z"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_SP
+        bool "BCMRING SP"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_SP_WQVGA
+        bool "BCMRING SP WQVGA"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_SV
+        bool "BCMRING SV"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_SV_JAZZ
+        bool "BCMRING SV JAZZ"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_TABLET
+        bool "BCMRING TABLET"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_TABLET_SINGLE
+        bool "BCMRING TABLET SINGLE VIDEOCORE"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_TABLET_V1
+        bool "BCMRING TABLET_V1"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_TABLET_SINGLE_V1
+        bool "BCMRING TABLET_V1 SINGLE VIDEOCORE"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_VP
+        bool "BCMRING VP"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_VP_SINGLE
+        bool "BCMRING VP SINGLE VIDEOCORE"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_RB
+        bool "BCMRING RB"
+        depends on ARCH_BCMRING
+
+config MACH_BCMRING_CUSTOM
+        bool "BCMRING CUSTOM"
+        depends on ARCH_BCMRING
+
+config BCM_ZRELADDR
+	hex "Compressed ZREL ADDR"
+
+config BCM_SVN_REVISION
+	string "SVN Revision Number"
+	depends on ARCH_BCMRING
+
+config BCM_VPM_START_ADDRESS
+   hex "VPM start address"
+   depends on ARCH_BCMRING
+
+config BCMRING_SECURE_DATA_CACHE
+	bool "Enable the Secure Data Cache (SDC) of BCMRING"
+	default n
+	depends on ARCH_BCMRING
+	help
+	   Enabling the Secure Data Cache (SDC) would configure the first
+	   4k of the ARAM as a general storage area for secure information.
+	   The SDC is currently accessible by the various boot stages or kernel.
+
+config BCMRING_SECURE_DATA_CACHE_SIZE
+	int "SDC size"
+
+config BCMRING_SECURE_DATA_CACHE_PAGE_SIZE
+    int "SDC page size"
+
+config BCMRING_SECURE_DATA_CACHE_LOCATION
+    hex "SDC location"
+
+config BCM_RAM_SIZE
+    hex "RAM size"
+
+config BCM_RAM_BASE
+    hex "RAM base"
+
+config BCM_RAM_START_RESERVED_SIZE
+    hex "RAM reserved"
+
+config BCM_ROOT_FILE_SYSTEM
+    int "BCM root file system"

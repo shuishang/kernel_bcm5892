@@ -1,0 +1,45 @@
+menu "BCM Options"
+	depends on ARCH_BCMRING || ARCH_BCM116X
+
+config BCM_ZRELADDR
+	hex "Compressed ZREL ADDR"
+
+config BCM_SVN_REVISION
+	string "SVN Revision Number"
+
+config BCM_EARLY_PRINTK
+    bool "Enable early console printk"
+    default n
+    help
+      Enable console printk very early in boot process.
+
+config BCM_DEBUG_PAUSE_JTAG
+    bool "Wait for a keypress during boot - JTAG"
+    default n
+    select BCM_DEBUG_PAUSE
+    help
+      Allows the kernel to pause during the boot process. This is a convenient
+      place to break into the kernel using the JTAG since the MMU has been
+      initialized.
+
+config BCM_CHIP
+    hex "Chip id"
+    
+choice
+	prompt "Serial port for early printk and jtag"
+	depends on BCM_EARLY_PRINTK || BCM_DEBUG_PAUSE_JTAG
+	default BCM_EARLY_CONSOLE_UARTA
+
+config BCM_EARLY_CONSOLE_UARTA
+	bool "UART A - Early Console"
+
+config BCM_EARLY_CONSOLE_UARTB
+	bool "UART B - Early Console"
+
+config BCM_EARLY_CONSOLE_UARTC
+	bool "UART C - Early Console"
+	depends on ARCH_BCM116X
+
+endchoice
+
+endmenu

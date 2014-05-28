@@ -1,0 +1,213 @@
+#
+# USB Gadget support on a system involves
+#    (a) a peripheral controller, and
+#    (b) the gadget driver using it.
+#
+# NOTE:  Gadget support ** DOES NOT ** depend on host-side CONFIG_USB !!
+#
+#  - Host systems (like PCs) need CONFIG_USB (with "A" jacks).
+#  - Peripherals (like PDAs) need CONFIG_USB_GADGET (with "B" jacks).
+#  - Some systems have both kinds of controllers.
+#
+# With help from a special transceiver and a "Mini-AB" jack, systems with
+# both kinds of controller can also support "USB On-the-Go" (CONFIG_USB_OTG).
+#
+menu "BCM589X USB OTG Support"
+
+#
+# USB Peripheral Controller Support
+#
+
+
+config USB_BCM589X_OTG
+         tristate "Synopsys Driver for BCM589X_OTG Controller"
+         select USB_BCM589X_GADGET_DUALSPEED
+         help
+            This driver provides USB Device Controller driver for BCM589X_OTG
+
+            Say "y" to link the driver statically, or "m" to build a
+            dynamically linked module called "bcm589x_otg" and to force all
+            gadget drivers to also be dynamically linked.
+
+
+config USB_BCM589X_GADGET_DUALSPEED
+        bool
+        depends on USB_BCM589X_OTG
+        default n
+        help
+          Means that gadget drivers should include extra descriptors
+          and code to handle dual-speed controllers.
+
+
+
+#
+#USB Gadget Support
+#
+
+config USB_BCM589X_GADGET
+        tristate "Support for USB Gadgets"
+	depends on USB_BCM589X_OTG
+        help
+           USB is a master/slave protocol, organized with one master
+           host (such as a PC) controlling up to 127 peripheral devices.
+           The USB hardware is asymmetric, which makes it easier to set up:
+           you can't connect a "to-the-host" connector to a peripheral.
+
+           Linux can run in the host, or in the peripheral.  In both cases
+           you need a low level bus controller driver, and some software
+           talking to it.  Peripheral controllers are often discrete silicon,
+           or are integrated with the CPU in a microcontroller.  The more
+           familiar host side controllers have names like "EHCI", "OHCI",
+           or "UHCI", and are usually integrated into southbridges on PC
+           motherboards.
+
+           Enable this configuration option if you want to run Linux inside
+           a USB peripheral device.  Configure one hardware driver for your
+           peripheral/device side bus controller, and a "gadget driver" for
+           your peripheral protocol.  (If you use modular gadget drivers,
+           you may configure more than one.)
+
+           If in doubt, say "N" and don't enable these drivers; most people
+           don't have this kind of hardware (except maybe inside Linux PDAs).
+
+           For more information, see <http://www.linux-usb.org/gadget> and
+           the kernel DocBook documentation for this API.
+
+config USB_BCM589X_GADGET_DEBUG
+        boolean "Debugging messages"
+        depends on USB_BCM589X_GADGET && DEBUG_KERNEL && EXPERIMENTAL
+        help
+           Many controller and gadget drivers will print some debugging
+           messages if you use this option to ask for those messages.
+
+           Avoid enabling these messages, even if you're actively
+           debugging such a driver.  Many drivers will emit so many
+           messages that the driver timings are affected, which will
+           either create new failure modes or remove the one you're
+           trying to track down.  Never enable these messages for a
+           production build.
+
+
+config  USB_BCM589X_GADGET_SELECTED
+        boolean
+
+
+
+#
+# USB Gadget Drivers
+#
+choice
+	tristate "USB Gadget Drivers"
+	depends on USB_BCM589X_GADGET
+	default USB_BCM589X_ZERO
+	help
+	  A Linux "Gadget Driver" talks to the USB Peripheral Controller
+	  driver through the abstract "gadget" API.  Some other operating
+	  systems call these "client" drivers, of which "class drivers"
+	  are a subset (implementing a USB device class specification).
+	  A gadget driver implements one or more USB functions using
+	  the peripheral hardware.
+
+	  Gadget drivers are hardware-neutral, or "platform independent",
+	  except that they sometimes must understand quirks or limitations
+	  of the particular controllers they work with.  For example, when
+	  a controller doesn't support alternate configurations or provide
+	  enough of the right types of endpoints, the gadget driver might
+	  not be able work with that controller, or might need to implement
+	  a less common variant of a device class protocol.
+
+# this first set of drivers all depend on bulk-capable hardware.
+
+config USB_BCM589X_ZERO
+	tristate "Gadget Zero (DEVELOPMENT)"
+	depends on EXPERIMENTAL
+	help
+	  Gadget Zero is a two-configuration device.  It either sinks and
+	  sources bulk data; or it loops back a configurable number of
+	  transfers.  It also implements control requests, for "chapter 9"
+	  conformance.  The driver needs only two bulk-capable endpoints, so
+	  it can work on top of most device-side usb controllers.  It's
+	  useful for testing, and is also a working example showing how
+	  USB "gadget drivers" can be written.
+
+	  Make this be the first driver you try using on top of any new
+	  USB peripheral controller driver.  Then you can use host-side
+	  test software, like the "usbtest" driver, to put your hardware
+	  and its driver through a basic set of functional tests.
+
+	  Gadget Zero also works with the host-side "usb-skeleton" driver,
+	  and with many kinds of host-side test software.  You may need
+	  to tweak product and vendor IDs before host software knows about
+	  this device, and arrange to select an appropriate configuration.
+
+	  Say "y" to link the driver statically, or "m" to build a
+	  dynamically linked module called "g_zero".
+
+config USB_BCM589X_ZERO_ISOC
+	bool "Gadget Zero - Isochronous Mode Support"
+	depends on USB_BCM589X_ZERO
+	default n
+	help
+	  Support isochronous data transfer mode in Gadget Zero.
+
+
+config USB_BCM589X_FILE_STORAGE
+	tristate "File-backed Storage Gadget"
+	depends on BLOCK
+	help
+	  The File-backed Storage Gadget acts as a USB Mass Storage
+	  disk drive.  As its storage repository it can use a regular
+	  file or a block device (in much the same way as the "loop"
+	  device driver), specified as a module parameter.
+
+	  Say "y" to link the driver statically, or "m" to build a
+	  dynamically linked module called "g_file_storage".
+
+config USB_BCM589X_FILE_STORAGE_TEST
+	bool "File-backed Storage Gadget testing version"
+	depends on USB_BCM589X_FILE_STORAGE
+	default n
+	help
+	  Say "y" to generate the larger testing version of the
+	  File-backed Storage Gadget, useful for probing the
+	  behavior of USB Mass Storage hosts.  Not needed for
+	  normal operation.
+
+config USB_BCM589X_G_SERIAL
+	tristate "Serial Gadget (with CDC ACM support)"
+	help
+	  The Serial Gadget talks to the Linux-USB generic serial driver.
+	  This driver supports a CDC-ACM module option, which can be used
+	  to interoperate with MS-Windows hosts or with the Linux-USB
+	  "cdc-acm" driver.
+
+	  Say "y" to link the driver statically, or "m" to build a
+	  dynamically linked module called "g_serial".
+
+	  For more information, see Documentation/usb/gadget_serial.txt
+	  which includes instructions and a "driver info file" needed to
+	  make MS-Windows work with this driver.
+
+config USB_BCM589X_MIDI_GADGET
+	tristate "MIDI Gadget (EXPERIMENTAL)"
+	depends on SND && EXPERIMENTAL
+	select SND_RAWMIDI
+	help
+	  The MIDI Gadget acts as a USB Audio device, with one MIDI
+	  input and one MIDI output. These MIDI jacks appear as
+	  a sound "card" in the ALSA sound system. Other MIDI
+	  connections can then be made on the gadget system, using
+	  ALSA's aconnect utility etc.
+
+	  Say "y" to link the driver statically, or "m" to build a
+	  dynamically linked module called "g_midi".
+
+
+# put drivers that need isochronous transfer support (for audio
+# or video class gadget drivers), or specific hardware, here.
+
+# - none yet
+
+endchoice
+
+endmenu

@@ -1,0 +1,4 @@
+comment "BCM2850 Core"
+	depends on ARCH_BCM2850
+
+# Add stuff as needed

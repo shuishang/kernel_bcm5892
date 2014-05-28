@@ -1,0 +1,65 @@
+# ALSA ARM drivers
+
+menuconfig SND_ARM
+	bool "ARM sound devices"
+	depends on ARM
+	default y
+	help
+	  Support for sound devices specific to ARM architectures.
+	  Drivers that are implemented on ASoC can be found in
+	  "ALSA for SoC audio support" section.
+
+if SND_ARM
+
+
+#also depends on VC... && VC03
+config SND_ARM_BRCM_OMX
+	tristate "Broadcom VC OMX Sound Driver"
+	depends on SND
+	select SND_PCM
+	select VC_ILCS
+	select VC_GENCMD
+	help
+	  Say Y here to activate an ALSA driver frontend to the BRCM endpoint
+	  To compile this driver as a module, choose M here: the module
+          will be called snd-brcm-omx.
+
+config SND_ARM_BCM5892
+    tristate "Broadcom BCM5892 ALSA Sound Driver"
+    depends on SND && ARCH_BCM5892 
+    select SND_PCM
+    help 
+      Say Y here to activate an ALSA driver frontend to the BCM5892 endpoint
+      To compile this driver as a module, choose M here: the module
+      will be called snd-bcm5892.
+
+config SND_ARMAACI
+	tristate "ARM PrimeCell PL041 AC Link support"
+	depends on ARM_AMBA
+	select SND_PCM
+	select SND_AC97_CODEC
+
+config SND_PXA2XX_PCM
+	tristate
+	select SND_PCM
+
+config SND_PXA2XX_LIB
+	tristate
+	select SND_AC97_CODEC if SND_PXA2XX_LIB_AC97
+
+config SND_PXA2XX_LIB_AC97
+	bool
+
+config SND_PXA2XX_AC97
+	tristate "AC97 driver for the Intel PXA2xx chip"
+	depends on ARCH_PXA
+	select SND_PXA2XX_PCM
+	select SND_AC97_CODEC
+	select SND_PXA2XX_LIB
+	select SND_PXA2XX_LIB_AC97
+	help
+	  Say Y or M if you want to support any AC97 codec attached to
+	  the PXA2xx AC97 interface.
+
+endif	# SND_ARM
+

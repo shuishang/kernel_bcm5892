@@ -1,0 +1,11 @@
+comment "BCM5892 Core"
+    depends on ARCH_BCM5892
+
+config BCM_RAM_SIZE
+    hex "RAM size"
+
+config BCM_RAM_BASE
+    hex "RAM base"
+
+config BCM_RAM_START_RESERVED_SIZE
+    hex "RAM reserved"

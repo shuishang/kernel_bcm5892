@@ -1,0 +1,48 @@
+#
+# BCM116x device configuration
+#
+
+menu "BCM116X Devices"
+    depends on ARCH_BCM116X
+
+config BCM116X_KEYPAD
+    bool "Keypad"
+    ---help---
+        This selects whether you want to include the BCM116x keypad driver.
+
+        If unsure, say Y.
+
+config BCM116X_LCD
+    bool "LCD Controller"
+    default n if BCM_VC02
+    select BCM_LCD_BACKLIGHT
+    ---help---
+    Enable the LCD driver? This refers to an LCD connected directly to the BCM116x.
+    select LCD_API
+
+config BCM_LCD_BTG222432
+    tristate "HYUNDAI BTG222432 LCD support"
+    depends on ARCH_BCM2153
+    ---help---
+     Support for HYUNDAI BTG222432 LCD
+     Say Y here to enable HYUNDAI BTG222432 LCD driver
+     Say m to make it a loadable module
+
+config BCM116X_NET_TIMESTAMP
+    bool "Add timestamp on sent packets"
+    ---help---
+    Add timestamps to packets
+
+config BCM116X_SLEEP_SETTLING_TIME
+    int "Sleep Mode Settling Time"
+    default 60
+    depends on BCM_SLEEP_MODE
+    ---help---
+    Sleep Mode Settling Time
+
+config BCM116X_AUXADC
+    bool "Auxiliary ADC Driver"
+    ---help---
+    Auxiliary ADC Driver
+
+endmenu
