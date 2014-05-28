@@ -1,0 +1,177 @@
+./tags:628667:__LINUX_MTD_NAND_GPIO_H	include/linux/mtd/nand-gpio.h	2;"	d
+./tags:656579:adjust_parts	include/linux/mtd/nand-gpio.h	/^	void	(*adjust_parts)(struct gpio_nand_platdata *, size_t);$/;"	m	struct:gpio_nand_platdata
+./tags:720002:chip_delay	include/linux/mtd/nand-gpio.h	/^	int	chip_delay;$/;"	m	struct:gpio_nand_platdata
+./tags:846359:gpio_ale	include/linux/mtd/nand-gpio.h	/^	int	gpio_ale;$/;"	m	struct:gpio_nand_platdata
+./tags:846480:gpio_cle	include/linux/mtd/nand-gpio.h	/^	int	gpio_cle;$/;"	m	struct:gpio_nand_platdata
+./tags:846923:gpio_nand_platdata	include/linux/mtd/nand-gpio.h	/^struct gpio_nand_platdata {$/;"	s
+./tags:846932:gpio_nce	include/linux/mtd/nand-gpio.h	/^	int	gpio_nce;$/;"	m	struct:gpio_nand_platdata
+./tags:846939:gpio_nwp	include/linux/mtd/nand-gpio.h	/^	int	gpio_nwp;$/;"	m	struct:gpio_nand_platdata
+./tags:846998:gpio_rdy	include/linux/mtd/nand-gpio.h	/^	int	gpio_rdy;$/;"	m	struct:gpio_nand_platdata
+./tags:995978:nand-objs	drivers/mtd/nand/Makefile	/^nand-objs := nand_base.o nand_bbt.o$/;"	m
+./tags:1013802:num_parts	include/linux/mtd/nand-gpio.h	/^	unsigned int num_parts;$/;"	m	struct:gpio_nand_platdata
+./tags:1022616:onenand-objs	drivers/mtd/onenand/Makefile	/^onenand-objs = onenand_base.o onenand_bbt.o$/;"	m
+./tags:1025003:options	include/linux/mtd/nand-gpio.h	/^	unsigned int options;$/;"	m	struct:gpio_nand_platdata
+./tags:1036669:parts	include/linux/mtd/nand-gpio.h	/^	struct mtd_partition *parts;$/;"	m	struct:gpio_nand_platdata	typeref:struct:gpio_nand_platdata::mtd_partition
+./Documentation/leds-class.txt:18:nand-disk and sharpsl-charge triggers. With led triggers disabled, the code
+./drivers/leds/leds-locomo.c:53:	.default_trigger	= "nand-disk",
+./drivers/leds/leds-rb532.c:37:	.default_trigger = "nand-disk",
+./drivers/mfd/tc6393xb.c:124:	struct platform_device *dev = to_platform_device(nand->dev.parent);
+./drivers/mfd/dm355evm_msp.c:278:				.default_trigger = "nand-disk", },
+./drivers/hwmon/applesmc.c:1000:	.default_trigger	= "nand-disk",
+./drivers/mtd/nand/bcm5892_nand.c:285:		nand->options	|= NAND_BUSWIDTH_16;		
+./drivers/mtd/nand/bcm5892_nand.c:295://		nand->options	|= NAND_BUSWIDTH_16; //del by lee		
+./drivers/mtd/nand/bcm5892_nand.c:1577:	nand->IO_ADDR_W = nand->IO_ADDR_R = 
+./drivers/mtd/nand/bcm5892_nand.c:1580:	nand->cmdfunc	= bcm5892_cmdfunc;
+./drivers/mtd/nand/bcm5892_nand.c:1581:	nand->read_buf = bcm5892_read_buf;
+./drivers/mtd/nand/bcm5892_nand.c:1582:	nand->write_buf = bcm5892_write_buf;
+./drivers/mtd/nand/bcm5892_nand.c:1583:	nand->read_word = bcm5892_read_word;
+./drivers/mtd/nand/bcm5892_nand.c:1584:	nand->read_byte = bcm5892_read_byte;
+./drivers/mtd/nand/bcm5892_nand.c:1585:	nand->select_chip = bcm5892_select_chip;
+./drivers/mtd/nand/bcm5892_nand.c:1586:	nand->waitfunc = bcm5892_wait;
+./drivers/mtd/nand/bcm5892_nand.c:1611:	nand->ecc.mode = NAND_ECC_HW;
+./drivers/mtd/nand/bcm5892_nand.c:1613:	nand->cmd_ctrl	= bcm5892_hwcontrol;
+./drivers/mtd/nand/bcm5892_nand.c:1614:	nand->ecc.write_oob = bcm5892_write_oob;
+./drivers/mtd/nand/bcm5892_nand.c:1616:	if (nand->ecc.mode == NAND_ECC_HW) {
+./drivers/mtd/nand/bcm5892_nand.c:1617:		nand->ecc.bytes = 3;
+./drivers/mtd/nand/bcm5892_nand.c:1618:		nand->ecc.size = 512;
+./drivers/mtd/nand/bcm5892_nand.c:1619:		nand->ecc.read_page = bcm5892_read_page_hwecc;
+./drivers/mtd/nand/bcm5892_nand.c:1620:		nand->ecc.write_page = bcm5892_write_page_hwecc;
+./drivers/mtd/nand/bcm5892_nand.c:1621:		nand->ecc.calculate = bcm5892_calculate;
+./drivers/mtd/nand/bcm5892_nand.c:1622:		nand->ecc.correct = bcm5892_correct;;
+./drivers/mtd/nand/bcm5892_nand.c:1623:		nand->ecc.hwctl = bcm5892_hwctl;
+./drivers/mtd/nand/bcm5892_nand.c:1632:	nand->options |= NAND_USE_FLASH_BBT; 
+./drivers/mtd/nand/bcm5892_nand.c:1635:		nand->bbt_td = &bcm5892_bbt_main_descr_512;
+./drivers/mtd/nand/bcm5892_nand.c:1636:		nand->bbt_md = &bcm5892_bbt_mirr_descr_512;
+./drivers/mtd/nand/bcm5892_nand.c:1637:		nand->ecc.layout = &bcm5892_oobinfo_512;
+./drivers/mtd/nand/bcm5892_nand.c:1639:		nand->bbt_td = &bcm5892_bbt_main_descr_2048;
+./drivers/mtd/nand/bcm5892_nand.c:1640:		nand->bbt_md = &bcm5892_bbt_mirr_descr_2048;
+./drivers/mtd/nand/bcm5892_nand.c:1641:		nand->ecc.layout = &bcm5892_oobinfo_2048;
+./drivers/mtd/nand/bcm5892_nand.c:1644:	nand->options |= NAND_NO_SUBPAGE_WRITE;
+./drivers/mtd/nand/w90p910_nand.c:134:	spin_lock(&nand->lock);
+./drivers/mtd/nand/w90p910_nand.c:137:	spin_unlock(&nand->lock);
+./drivers/mtd/nand/w90p910_nand.c:247:	spin_lock(&nand->lock);
+./drivers/mtd/nand/w90p910_nand.c:248:	__raw_writel(RESET_FMI, (nand->reg + REG_FMICSR));
+./drivers/mtd/nand/w90p910_nand.c:250:	val = __raw_readl(nand->reg + REG_FMICSR);
+./drivers/mtd/nand/w90p910_nand.c:255:	val = __raw_readl(nand->reg + REG_SMCSR);
+./drivers/mtd/nand/w90p910_nand.c:260:	__raw_writel(val, nand->reg + REG_SMCSR);
+./drivers/mtd/nand/w90p910_nand.c:262:	spin_unlock(&nand->lock);
+./drivers/mtd/nand/w90p910_nand.c:277:	chip = &(w90p910_nand->chip);
+./drivers/mtd/nand/w90p910_nand.c:279:	w90p910_nand->mtd.priv	= chip;
+./drivers/mtd/nand/w90p910_nand.c:280:	w90p910_nand->mtd.owner	= THIS_MODULE;
+./drivers/mtd/nand/w90p910_nand.c:281:	spin_lock_init(&w90p910_nand->lock);
+./drivers/mtd/nand/w90p910_nand.c:283:	w90p910_nand->clk = clk_get(&pdev->dev, NULL);
+./drivers/mtd/nand/w90p910_nand.c:284:	if (IS_ERR(w90p910_nand->clk)) {
+./drivers/mtd/nand/w90p910_nand.c:288:	clk_enable(w90p910_nand->clk);
+./drivers/mtd/nand/w90p910_nand.c:311:	w90p910_nand->reg = ioremap(res->start, resource_size(res));
+./drivers/mtd/nand/w90p910_nand.c:312:	if (!w90p910_nand->reg) {
+./drivers/mtd/nand/w90p910_nand.c:319:	if (nand_scan(&(w90p910_nand->mtd), 1)) {
+./drivers/mtd/nand/w90p910_nand.c:324:	add_mtd_partitions(&(w90p910_nand->mtd), partitions,
+./drivers/mtd/nand/w90p910_nand.c:331:fail3:	iounmap(w90p910_nand->reg);
+./drivers/mtd/nand/w90p910_nand.c:342:	iounmap(w90p910_nand->reg);
+./drivers/mtd/nand/w90p910_nand.c:347:	clk_disable(w90p910_nand->clk);
+./drivers/mtd/nand/w90p910_nand.c:348:	clk_put(w90p910_nand->clk);
+./drivers/mtd/nand/nandsim.c:2266:		nand->geom.idbytes = 4;
+./drivers/mtd/nand/nandsim.c:2268:		nand->geom.idbytes = 2;
+./drivers/mtd/nand/nandsim.c:2269:	nand->regs.status = NS_STATUS_OK(nand);
+./drivers/mtd/nand/nandsim.c:2270:	nand->nxstate = STATE_UNKNOWN;
+./drivers/mtd/nand/nandsim.c:2271:	nand->options |= OPT_PAGE256; /* temporary value */
+./drivers/mtd/nand/nandsim.c:2272:	nand->ids[0] = first_id_byte;
+./drivers/mtd/nand/nandsim.c:2273:	nand->ids[1] = second_id_byte;
+./drivers/mtd/nand/nandsim.c:2274:	nand->ids[2] = third_id_byte;
+./drivers/mtd/nand/nandsim.c:2275:	nand->ids[3] = fourth_id_byte;
+./drivers/mtd/nand/nandsim.c:2277:		nand->busw = 16;
+./drivers/mtd/nand/nandsim.c:2325:	if ((retval = add_mtd_partitions(nsmtd, &nand->partitions[0], nand->nbparts)) != 0)
+./drivers/mtd/nand/nandsim.c:2333:	for (i = 0;i < ARRAY_SIZE(nand->partitions); ++i)
+./drivers/mtd/nand/nandsim.c:2334:		kfree(nand->partitions[i].name);
+./drivers/mtd/nand/pxa3xx_nand.c:1102:	info->data_dma_ch = pxa_request_dma("nand-data", DMA_PRIO_LOW,
+./drivers/mtd/nand/nand_base.c.orig:3016:	led_trigger_register_simple("nand-disk", &nand_led_trigger);
+./drivers/mtd/nand/gpio.c:29:#include <linux/mtd/nand-gpio.h>
+./drivers/mtd/nand/Makefile.orig:46:nand-objs := nand_base.o nand_bbt.o
+./drivers/mtd/nand/omap2.c:224:	ioread8_rep(nand->IO_ADDR_R, buf, len);
+./drivers/mtd/nand/omap2.c:256:	ioread16_rep(nand->IO_ADDR_R, buf, len / 2);
+./drivers/mtd/nand/diskonchip.c:1595:		doc = nand->priv;
+./drivers/mtd/nand/diskonchip.c:1638:	nand->bbt_td		= (struct nand_bbt_descr *) (doc + 1);
+./drivers/mtd/nand/diskonchip.c:1639:	nand->bbt_md		= nand->bbt_td + 1;
+./drivers/mtd/nand/diskonchip.c:1644:	nand->priv		= doc;
+./drivers/mtd/nand/diskonchip.c:1645:	nand->select_chip	= doc200x_select_chip;
+./drivers/mtd/nand/diskonchip.c:1646:	nand->cmd_ctrl		= doc200x_hwcontrol;
+./drivers/mtd/nand/diskonchip.c:1647:	nand->dev_ready		= doc200x_dev_ready;
+./drivers/mtd/nand/diskonchip.c:1648:	nand->waitfunc		= doc200x_wait;
+./drivers/mtd/nand/diskonchip.c:1649:	nand->block_bad		= doc200x_block_bad;
+./drivers/mtd/nand/diskonchip.c:1650:	nand->ecc.hwctl		= doc200x_enable_hwecc;
+./drivers/mtd/nand/diskonchip.c:1651:	nand->ecc.calculate	= doc200x_calculate_ecc;
+./drivers/mtd/nand/diskonchip.c:1652:	nand->ecc.correct	= doc200x_correct_data;
+./drivers/mtd/nand/diskonchip.c:1654:	nand->ecc.layout	= &doc200x_oobinfo;
+./drivers/mtd/nand/diskonchip.c:1655:	nand->ecc.mode		= NAND_ECC_HW_SYNDROME;
+./drivers/mtd/nand/diskonchip.c:1656:	nand->ecc.size		= 512;
+./drivers/mtd/nand/diskonchip.c:1657:	nand->ecc.bytes		= 6;
+./drivers/mtd/nand/diskonchip.c:1658:	nand->options		= NAND_USE_FLASH_BBT;
+./drivers/mtd/nand/diskonchip.c:1709:		doc = nand->priv;
+./drivers/mtd/nand/fsl_elbc_nand.c:677:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->numchips = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:679:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->chipsize = %lld\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:681:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->pagemask = %8x\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:683:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->chip_delay = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:685:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->badblockpos = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:687:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->chip_shift = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:689:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->page_shift = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:691:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->phys_erase_shift = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:693:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->ecclayout = %p\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:695:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->ecc.mode = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:697:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->ecc.steps = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:699:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->ecc.bytes = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:701:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->ecc.total = %d\n",
+./drivers/mtd/nand/fsl_elbc_nand.c:703:	dev_dbg(ctrl->dev, "fsl_elbc_init: nand->ecc.layout = %p\n",
+./drivers/mtd/nand/sh_flctl.c:815:	nand->options = NAND_NO_AUTOINCR;
+./drivers/mtd/nand/sh_flctl.c:819:	nand->chip_delay = 20;
+./drivers/mtd/nand/sh_flctl.c:821:	nand->read_byte = flctl_read_byte;
+./drivers/mtd/nand/sh_flctl.c:822:	nand->write_buf = flctl_write_buf;
+./drivers/mtd/nand/sh_flctl.c:823:	nand->read_buf = flctl_read_buf;
+./drivers/mtd/nand/sh_flctl.c:824:	nand->verify_buf = flctl_verify_buf;
+./drivers/mtd/nand/sh_flctl.c:825:	nand->select_chip = flctl_select_chip;
+./drivers/mtd/nand/sh_flctl.c:826:	nand->cmdfunc = flctl_cmdfunc;
+./drivers/mtd/nand/nomadik_nand.c:66:	struct nomadik_nand_host *host = nand->priv;
+./drivers/mtd/nand/nomadik_nand.c:132:	nand->priv = host;
+./drivers/mtd/nand/nomadik_nand.c:135:	nand->IO_ADDR_R = host->data_va;
+./drivers/mtd/nand/nomadik_nand.c:136:	nand->IO_ADDR_W = host->data_va;
+./drivers/mtd/nand/nomadik_nand.c:137:	nand->cmd_ctrl = nomadik_cmd_ctrl;
+./drivers/mtd/nand/nomadik_nand.c:144:	nand->ecc.mode = NAND_ECC_SOFT;
+./drivers/mtd/nand/nomadik_nand.c:145:	nand->ecc.layout = &nomadik_ecc_layout;
+./drivers/mtd/nand/nomadik_nand.c:146:	nand->ecc.hwctl = nomadik_ecc_control;
+./drivers/mtd/nand/nomadik_nand.c:147:	nand->ecc.size = 512;
+./drivers/mtd/nand/nomadik_nand.c:148:	nand->ecc.bytes = 3;
+./drivers/mtd/nand/nomadik_nand.c:150:	nand->options = pdata->options;
+./drivers/mtd/nand/Makefile:48:nand-objs := nand_base.o nand_bbt.o
+./drivers/mtd/nand/nand_base.c:3038:	led_trigger_register_simple("nand-disk", &nand_led_trigger);
+./drivers/mtd/nand/davinci_nand.c:116:		nand->IO_ADDR_W = (void __iomem __force *)addr;
+./drivers/mtd/nand/davinci_nand.c:120:		iowrite8(cmd, nand->IO_ADDR_W);
+./drivers/mtd/onenand/onenand_bcm_xboard.c:99:			if (info->onenand->base)
+./drivers/mtd/onenand/onenand_bcm_xboard.c:101:				iounmap ((void *) info->onenand->base);
+./drivers/mtd/onenand/onenand_bcm_xboard.c:102:				info->onenand->base = NULL;
+./drivers/mtd/onenand/onenand_bcm_xboard.c:148:	info->onenand->base =
+./drivers/mtd/onenand/onenand_bcm_xboard.c:152:	 * info->onenand->mmcontrol = ???; 
+./drivers/mtd/onenand/onenand_bcm_xboard.c:153:	 * info->onenand->irq = ???; 
+./drivers/mtd/onenand/Makefile:15:onenand-objs = onenand_base.o onenand_bbt.o
+./drivers/mtd/onenand/generic.c:27: * This version of the driver is named "onenand-flash" and takes struct
+./drivers/mtd/onenand/generic.c:31:#define DRIVER_NAME	"onenand-flash"
+./arch/arm/mach-omap2/board-apollon.c:102:	.name		= "onenand-flash",
+./arch/arm/mach-omap2/Makefile:84:onenand-$(CONFIG_MTD_ONENAND_OMAP2)	:= gpmc-onenand.o
+./arch/arm/mach-omap2/Makefile:85:obj-y					+= $(onenand-m) $(onenand-y)
+./arch/arm/mach-s3c2410/mach-bast.c:268:/* the bast has 4 selectable slots for nand-flash, the three
+./arch/arm/mach-at91/board-sam9m10g45ek.c:334:		.default_trigger	= "nand-disk",
+./arch/arm/mach-at91/board-sam9263ek.c:381:		.default_trigger	= "nand-disk",
+./arch/arm/plat-s3c24xx/common-smdk.c:61:	.def_trigger	= "nand-disk",
+./arch/arm/mach-pxa/corgi.c:415:		.default_trigger	= "nand-disk",
+./arch/arm/mach-pxa/cm-x255.c:17:#include <linux/mtd/nand-gpio.h>
+./arch/arm/mach-pxa/balloon3.c:280:		.default_trigger	= "nand-disk",
+./arch/arm/mach-pxa/tosa.c:494:		.default_trigger	= "nand-disk",
+./arch/arm/mach-pxa/cm-x2xx.c:141:		.default_trigger = "nand-disk",
+./arch/arm/mach-s3c2440/mach-anubis.c:187:/* the Anubis has 3 selectable slots for nand-flash, the two
+./arch/arm/mach-s3c2440/mach-osiris.c:197:/* the Osiris has 3 selectable slots for nand-flash, the two
+./arch/arm/mach-s3c2440/mach-mini2440.c:413:	.def_trigger	= "nand-disk",
+./arch/arm/mach-s3c2412/mach-jive.c:249:		nand->nr_partitions = ARRAY_SIZE(jive_imageB_nand_part);
+./arch/arm/mach-s3c2412/mach-jive.c:250:		nand->partitions = jive_imageB_nand_part;
+./arch/arm/mach-davinci/board-dm365-evm.c:301:	{ "dm365evm::ds6", "nand-disk", },
+./arch/arm/mach-davinci/board-dm644x-evm.c:726:			evm_leds[7].default_trigger = "nand-disk";
+./arch/mips/basler/excite/excite_device.c:272: * Create a platform device for the access to the nand-flash
+./arch/mips/txx9/generic/setup.c:774:		"nand-disk",
+./arch/mips/txx9/rbtx4939/setup.c:218:		"nand-disk",

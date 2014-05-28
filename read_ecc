@@ -1,0 +1,158 @@
+匹配到二进制文件 ./uImage.bin
+./include/linux/mtd/nand.h:637:	struct nand_chip *chip = mtd->priv;
+./include/linux/mtd/mtd.h:17:#include <mtd/mtd-abi.h>
+./include/linux/mtd/mtd.h:259:	if (mtd->erasesize_shift)
+./include/linux/mtd/mtd.h:260:		return sz >> mtd->erasesize_shift;
+./include/linux/mtd/mtd.h:261:	do_div(sz, mtd->erasesize);
+./include/linux/mtd/mtd.h:267:	if (mtd->erasesize_shift)
+./include/linux/mtd/mtd.h:268:		return sz & mtd->erasesize_mask;
+./include/linux/mtd/mtd.h:269:	return do_div(sz, mtd->erasesize);
+./include/linux/mtd/mtd.h:274:	if (mtd->writesize_shift)
+./include/linux/mtd/mtd.h:275:		return sz >> mtd->writesize_shift;
+./include/linux/mtd/mtd.h:276:	do_div(sz, mtd->writesize);
+./include/linux/mtd/mtd.h:282:	if (mtd->writesize_shift)
+./include/linux/mtd/mtd.h:283:		return sz & mtd->writesize_mask;
+./include/linux/mtd/mtd.h:284:	return do_div(sz, mtd->writesize);
+./include/linux/mtd/xip.h:65:#include <asm/mtd-xip.h>
+./include/linux/mtd/map.h:178:   At which point, you fill in the mtd->module with your own module
+./include/linux/mtd/map.h:183:   The mtd->priv field will point to the struct map_info, and any further
+./include/linux/mtd/map.h:185:   mtd->priv->fldrv_priv field. This allows the map driver to get at
+./include/mtd/Kbuild:2:header-y += mtd-abi.h
+./include/mtd/Kbuild:3:header-y += mtd-user.h
+./include/mtd/mtd-user.h:11:#include <mtd/mtd-abi.h>
+匹配到二进制文件 ./.tmp_vmlinux1
+./tags:12231:AITC_BASE	arch/arm/plat-mxc/include/mach/mtd-xip.h	21;"	d
+./tags:149071:ECCGETLAYOUT	include/mtd/mtd-abi.h	107;"	d
+./tags:149072:ECCGETSTATS	include/mtd/mtd-abi.h	108;"	d
+./tags:241072:INTENABLEH	arch/arm/plat-mxc/include/mach/mtd-xip.h	24;"	d
+./tags:241073:INTENABLEL	arch/arm/plat-mxc/include/mach/mtd-xip.h	25;"	d
+./tags:303645:MEMERASE	include/mtd/mtd-abi.h	92;"	d
+./tags:303646:MEMERASE64	include/mtd/mtd-abi.h	110;"	d
+./tags:303650:MEMGETBADBLOCK	include/mtd/mtd-abi.h	101;"	d
+./tags:303651:MEMGETINFO	include/mtd/mtd-abi.h	91;"	d
+./tags:303652:MEMGETOOBSEL	include/mtd/mtd-abi.h	100;"	d
+./tags:303653:MEMGETREGIONCOUNT	include/mtd/mtd-abi.h	97;"	d
+./tags:303654:MEMGETREGIONINFO	include/mtd/mtd-abi.h	98;"	d
+./tags:303658:MEMLOCK	include/mtd/mtd-abi.h	95;"	d
+./tags:303720:MEMREADOOB	include/mtd/mtd-abi.h	94;"	d
+./tags:303722:MEMREADOOB64	include/mtd/mtd-abi.h	112;"	d
+./tags:303733:MEMSETBADBLOCK	include/mtd/mtd-abi.h	102;"	d
+./tags:303734:MEMSETOOBSEL	include/mtd/mtd-abi.h	99;"	d
+./tags:303813:MEMUNLOCK	include/mtd/mtd-abi.h	96;"	d
+./tags:303816:MEMWRITEOOB	include/mtd/mtd-abi.h	93;"	d
+./tags:303818:MEMWRITEOOB64	include/mtd/mtd-abi.h	111;"	d
+./tags:322515:MTDFILEMODE	include/mtd/mtd-abi.h	109;"	d
+./tags:322524:MTD_ABSENT	include/mtd/mtd-abi.h	33;"	d
+./tags:322525:MTD_BIT_WRITEABLE	include/mtd/mtd-abi.h	42;"	d
+./tags:322527:MTD_CAP_NANDFLASH	include/mtd/mtd-abi.h	50;"	d
+./tags:322528:MTD_CAP_NORFLASH	include/mtd/mtd-abi.h	49;"	d
+./tags:322529:MTD_CAP_RAM	include/mtd/mtd-abi.h	48;"	d
+./tags:322530:MTD_CAP_ROM	include/mtd/mtd-abi.h	47;"	d
+./tags:322534:MTD_DATAFLASH	include/mtd/mtd-abi.h	38;"	d
+./tags:322548:MTD_MAX_OOBFREE_ENTRIES	include/mtd/mtd-abi.h	130;"	d
+./tags:322549:MTD_MODE_NORMAL	include/mtd/mtd-abi.h	/^	MTD_MODE_NORMAL = MTD_OTP_OFF,$/;"	e	enum:mtd_file_modes
+./tags:322550:MTD_MODE_OTP_FACTORY	include/mtd/mtd-abi.h	/^	MTD_MODE_OTP_FACTORY = MTD_OTP_FACTORY,$/;"	e	enum:mtd_file_modes
+./tags:322551:MTD_MODE_OTP_USER	include/mtd/mtd-abi.h	/^	MTD_MODE_OTP_USER = MTD_OTP_USER,$/;"	e	enum:mtd_file_modes
+./tags:322552:MTD_MODE_RAW	include/mtd/mtd-abi.h	/^	MTD_MODE_RAW,$/;"	e	enum:mtd_file_modes
+./tags:322553:MTD_NANDECC_AUTOPLACE	include/mtd/mtd-abi.h	55;"	d
+./tags:322554:MTD_NANDECC_AUTOPL_USR	include/mtd/mtd-abi.h	57;"	d
+./tags:322555:MTD_NANDECC_OFF	include/mtd/mtd-abi.h	53;"	d
+./tags:322556:MTD_NANDECC_PLACE	include/mtd/mtd-abi.h	54;"	d
+./tags:322557:MTD_NANDECC_PLACEONLY	include/mtd/mtd-abi.h	56;"	d
+./tags:322558:MTD_NANDFLASH	include/mtd/mtd-abi.h	37;"	d
+./tags:322559:MTD_NORFLASH	include/mtd/mtd-abi.h	36;"	d
+./tags:322560:MTD_NO_ERASE	include/mtd/mtd-abi.h	43;"	d
+./tags:322567:MTD_OTP_FACTORY	include/mtd/mtd-abi.h	61;"	d
+./tags:322568:MTD_OTP_OFF	include/mtd/mtd-abi.h	60;"	d
+./tags:322569:MTD_OTP_USER	include/mtd/mtd-abi.h	62;"	d
+./tags:322572:MTD_POWERUP_LOCK	include/mtd/mtd-abi.h	44;"	d
+./tags:322573:MTD_RAM	include/mtd/mtd-abi.h	34;"	d
+./tags:322574:MTD_ROM	include/mtd/mtd-abi.h	35;"	d
+./tags:322586:MTD_UBIVOLUME	include/mtd/mtd-abi.h	39;"	d
+./tags:322595:MTD_WRITEABLE	include/mtd/mtd-abi.h	41;"	d
+./tags:341014:NIPNDH	arch/arm/plat-mxc/include/mach/mtd-xip.h	22;"	d
+./tags:341015:NIPNDL	arch/arm/plat-mxc/include/mach/mtd-xip.h	23;"	d
+./tags:354808:OMAP_MPU_TIMER_BASE	arch/arm/plat-omap/include/mach/mtd-xip.h	18;"	d
+./tags:354810:OMAP_MPU_TIMER_OFFSET	arch/arm/plat-omap/include/mach/mtd-xip.h	19;"	d
+./tags:357474:OTPGETREGIONCOUNT	include/mtd/mtd-abi.h	104;"	d
+./tags:357475:OTPGETREGIONINFO	include/mtd/mtd-abi.h	105;"	d
+./tags:357476:OTPLOCK	include/mtd/mtd-abi.h	106;"	d
+./tags:357477:OTPSELECT	include/mtd/mtd-abi.h	103;"	d
+./tags:626222:__ARCH_IMX_MTD_XIP_H__	arch/arm/plat-mxc/include/mach/mtd-xip.h	17;"	d
+./tags:626229:__ARCH_OMAP_MTD_XIP_H__	arch/arm/plat-omap/include/mach/mtd-xip.h	15;"	d
+./tags:626234:__ARCH_PXA_MTD_XIP_H__	arch/arm/mach-pxa/include/mach/mtd-xip.h	16;"	d
+./tags:626244:__ARCH_SA1100_MTD_XIP_H__	arch/arm/mach-sa1100/include/mach/mtd-xip.h	16;"	d
+./tags:626343:__ARM_MTD_XIP_H__	arch/arm/include/asm/mtd-xip.h	16;"	d
+./tags:629474:__MTD_ABI_H__	include/mtd/mtd-abi.h	6;"	d
+./tags:629489:__MTD_USER_H__	include/mtd/mtd-user.h	6;"	d
+./tags:686292:badblocks	include/mtd/mtd-abi.h	/^	__u32 badblocks;$/;"	m	struct:mtd_ecc_stats
+./tags:688018:bbtblocks	include/mtd/mtd-abi.h	/^	__u32 bbtblocks;$/;"	m	struct:mtd_ecc_stats
+./tags:735597:cntl	arch/arm/plat-omap/include/mach/mtd-xip.h	/^	u32 cntl;			\/* CNTL_TIMER, R\/W *\/$/;"	m	struct:__anon7897
+./tags:742962:corrected	include/mtd/mtd-abi.h	/^	__u32 corrected;$/;"	m	struct:mtd_ecc_stats
+./tags:799527:eccbytes	include/mtd/mtd-abi.h	/^	__u32 eccbytes;$/;"	m	struct:nand_ecclayout
+./tags:799528:eccbytes	include/mtd/mtd-abi.h	/^	__u32 eccbytes;$/;"	m	struct:nand_oobinfo
+./tags:799544:eccpos	include/mtd/mtd-abi.h	/^	__u32 eccpos[32];$/;"	m	struct:nand_oobinfo
+./tags:799545:eccpos	include/mtd/mtd-abi.h	/^	__u32 eccpos[64];$/;"	m	struct:nand_ecclayout
+./tags:799554:eccsize	include/mtd/mtd-abi.h	/^	__u32 eccsize;$/;"	m	struct:mtd_info_user
+./tags:799555:ecctype	include/mtd/mtd-abi.h	/^	__u32 ecctype;$/;"	m	struct:mtd_info_user
+./tags:809176:erase_info_t	include/mtd/mtd-user.h	/^typedef struct erase_info_user erase_info_t;$/;"	t	typeref:struct:erase_info_user
+./tags:809177:erase_info_user	include/mtd/mtd-abi.h	/^struct erase_info_user {$/;"	s
+./tags:809178:erase_info_user64	include/mtd/mtd-abi.h	/^struct erase_info_user64 {$/;"	s
+./tags:809213:erasesize	include/mtd/mtd-abi.h	/^	__u32 erasesize;		\/* For this region *\/$/;"	m	struct:region_info_user
+./tags:809214:erasesize	include/mtd/mtd-abi.h	/^	__u32 erasesize;$/;"	m	struct:mtd_info_user
+./tags:817315:failed	include/mtd/mtd-abi.h	/^	__u32 failed;$/;"	m	struct:mtd_ecc_stats
+./tags:828331:flags	include/mtd/mtd-abi.h	/^	__u32 flags;$/;"	m	struct:mtd_info_user
+./tags:924715:length	include/mtd/mtd-abi.h	/^	__u32 length;$/;"	m	struct:erase_info_user
+./tags:924716:length	include/mtd/mtd-abi.h	/^	__u32 length;$/;"	m	struct:mtd_oob_buf
+./tags:924717:length	include/mtd/mtd-abi.h	/^	__u32 length;$/;"	m	struct:mtd_oob_buf64
+./tags:924718:length	include/mtd/mtd-abi.h	/^	__u32 length;$/;"	m	struct:nand_oobfree
+./tags:924719:length	include/mtd/mtd-abi.h	/^	__u32 length;$/;"	m	struct:otp_info
+./tags:924720:length	include/mtd/mtd-abi.h	/^	__u64 length;$/;"	m	struct:erase_info_user64
+./tags:931136:load_tim	arch/arm/plat-omap/include/mach/mtd-xip.h	/^	u32 load_tim;			\/* LOAD_TIM,   W *\/$/;"	m	struct:__anon7897
+./tags:933258:locked	include/mtd/mtd-abi.h	/^	__u32 locked;$/;"	m	struct:otp_info
+./tags:989978:mtd-y	drivers/mtd/Makefile	/^mtd-y				:= mtdcore.o mtdsuper.o mtdbdi.o$/;"	m
+./tags:990017:mtd_ecc_stats	include/mtd/mtd-abi.h	/^struct mtd_ecc_stats {$/;"	s
+./tags:990026:mtd_file_modes	include/mtd/mtd-abi.h	/^enum mtd_file_modes {$/;"	g
+./tags:990043:mtd_info_t	include/mtd/mtd-user.h	/^typedef struct mtd_info_user mtd_info_t;$/;"	t	typeref:struct:mtd_info_user
+./tags:990046:mtd_info_user	include/mtd/mtd-abi.h	/^struct mtd_info_user {$/;"	s
+./tags:990057:mtd_oob_buf	include/mtd/mtd-abi.h	/^struct mtd_oob_buf {$/;"	s
+./tags:990059:mtd_oob_buf64	include/mtd/mtd-abi.h	/^struct mtd_oob_buf64 {$/;"	s
+./tags:996977:nand_ecclayout	include/mtd/mtd-abi.h	/^struct nand_ecclayout {$/;"	s
+./tags:996978:nand_ecclayout_t	include/mtd/mtd-user.h	/^typedef struct nand_ecclayout nand_ecclayout_t;$/;"	t	typeref:struct:nand_ecclayout
+./tags:997027:nand_oobfree	include/mtd/mtd-abi.h	/^struct nand_oobfree {$/;"	s
+./tags:997028:nand_oobinfo	include/mtd/mtd-abi.h	/^struct nand_oobinfo {$/;"	s
+./tags:997029:nand_oobinfo_t	include/mtd/mtd-user.h	/^typedef struct nand_oobinfo nand_oobinfo_t;$/;"	t	typeref:struct:nand_oobinfo
+./tags:1015372:numblocks	include/mtd/mtd-abi.h	/^	__u32 numblocks;		\/* Number of blocks in this region *\/$/;"	m	struct:region_info_user
+./tags:1020045:offset	include/mtd/mtd-abi.h	/^	__u32 offset;		\/* At which this region starts,$/;"	m	struct:region_info_user
+./tags:1020046:offset	include/mtd/mtd-abi.h	/^	__u32 offset;$/;"	m	struct:nand_oobfree
+./tags:1023842:oobavail	include/mtd/mtd-abi.h	/^	__u32 oobavail;$/;"	m	struct:nand_ecclayout
+./tags:1023845:oobfree	include/mtd/mtd-abi.h	/^	__u32 oobfree[8][2];$/;"	m	struct:nand_oobinfo
+./tags:1023846:oobfree	include/mtd/mtd-abi.h	/^	struct nand_oobfree oobfree[MTD_MAX_OOBFREE_ENTRIES];$/;"	m	struct:nand_ecclayout	typeref:struct:nand_ecclayout::nand_oobfree
+./tags:1023854:oobsize	include/mtd/mtd-abi.h	/^	__u32 oobsize;   \/\/ Amount of OOB data per block (e.g. 16)$/;"	m	struct:mtd_info_user
+./tags:1027747:otp_info	include/mtd/mtd-abi.h	/^struct otp_info {$/;"	s
+./tags:1032964:pad	include/mtd/mtd-abi.h	/^	__u32 pad;$/;"	m	struct:mtd_oob_buf64
+./tags:1067037:ptr	include/mtd/mtd-abi.h	/^	unsigned char __user *ptr;$/;"	m	struct:mtd_oob_buf
+./tags:1085217:read_tim	arch/arm/plat-omap/include/mach/mtd-xip.h	/^	u32 read_tim;			\/* READ_TIM,   R *\/$/;"	m	struct:__anon7897
+./tags:1090545:region_info_t	include/mtd/mtd-user.h	/^typedef struct region_info_user region_info_t;$/;"	t	typeref:struct:region_info_user
+./tags:1090548:region_info_user	include/mtd/mtd-abi.h	/^struct region_info_user {$/;"	s
+./tags:1090582:regionindex	include/mtd/mtd-abi.h	/^	__u32 regionindex;$/;"	m	struct:region_info_user
+./tags:1154679:size	include/mtd/mtd-abi.h	/^	__u32 size;	 \/\/ Total size of the MTD$/;"	m	struct:mtd_info_user
+./tags:1178943:start	include/mtd/mtd-abi.h	/^	__u32 start;$/;"	m	struct:erase_info_user
+./tags:1178944:start	include/mtd/mtd-abi.h	/^	__u32 start;$/;"	m	struct:mtd_oob_buf
+./tags:1178945:start	include/mtd/mtd-abi.h	/^	__u32 start;$/;"	m	struct:otp_info
+./tags:1178946:start	include/mtd/mtd-abi.h	/^	__u64 start;$/;"	m	struct:erase_info_user64
+./tags:1178947:start	include/mtd/mtd-abi.h	/^	__u64 start;$/;"	m	struct:mtd_oob_buf64
+./tags:1220860:type	include/mtd/mtd-abi.h	/^	__u8 type;$/;"	m	struct:mtd_info_user
+./tags:1236767:useecc	include/mtd/mtd-abi.h	/^	__u32 useecc;$/;"	m	struct:nand_oobinfo
+./tags:1237423:usr_ptr	include/mtd/mtd-abi.h	/^	__u64 usr_ptr;$/;"	m	struct:mtd_oob_buf64
+./tags:1265685:writesize	include/mtd/mtd-abi.h	/^	__u32 writesize;$/;"	m	struct:mtd_info_user
+./tags:1271938:xip_cpu_idle	arch/arm/mach-pxa/include/mach/mtd-xip.h	34;"	d
+./tags:1271939:xip_cpu_idle	arch/arm/plat-mxc/include/mach/mtd-xip.h	31;"	d
+./tags:1271940:xip_cpu_idle	arch/arm/plat-omap/include/mach/mtd-xip.h	59;"	d
+./tags:1271942:xip_currtime	arch/arm/mach-pxa/include/mach/mtd-xip.h	24;"	d
+./tags:1271943:xip_currtime	arch/arm/mach-sa1100/include/mach/mtd-xip.h	23;"	d
+./tags:1271944:xip_currtime	arch/arm/plat-mxc/include/mach/mtd-xip.h	29;"	d
+./tags:1271945:xip_currtime	arch/arm/plat-omap/include/mach/mtd-xip.h	39;"	d
+./tags:1271955:xip_elapsed_since	arch/arm/mach-pxa/include/mach/mtd-xip.h	25;"	d
+./tags:1271956:xip_elapsed_since	arch/arm/mach-sa1100/include/mach/mtd-xip.h	24;"	d
+./tags:1271957:xip_elapsed_since	arch/arm/plat

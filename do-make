@@ -1,0 +1,4 @@
+make ARCH=arm CROSS_COMPILE=/opt/arm/scl8500/tools/brcm-armtools-64bit/tools/le_arm11_external_20090306/bin/arm-brcm-linux-gnueabi- uImage
+#cd arch/arm/boot
+#./do-make
+
