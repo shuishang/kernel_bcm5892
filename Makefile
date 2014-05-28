@@ -184,7 +184,7 @@ export KBUILD_BUILDHOST := $(SUBARCH)
 ARCH		?= $(SUBARCH)
 #CROSS_COMPILE	?=
 #CROSS_COMPILE	?=arm-none-linux-gnueabi-
-CROSS_COMPILE	?=/opt/4.4.3/bin/arm-none-linux-gnueabi-
+CROSS_COMPILE	?=arm-none-linux-gnueabi-
 #CROSS_COMPILE	?= /home/ljj/work/pos/scl8500/toolchain/arm-2011.03/bin/arm-none-eabi-
 #CROSS_COMPILE	?=/home/ljj/work/pos/scl8500/toolchain/arm-2011.03/bin/arm-none-linux-gnueabi-
 
