@@ -96,19 +96,31 @@ EXPORT_SYMBOL(bcm5892_platform_device_unregister);
 
 int bcm5892_nand_scan_ident (struct mtd_info *mtd, int maxchips)
 {
+#ifdef CONFIG_MTD_NAND
 	return nand_scan_ident(mtd, maxchips);
+#else
+	return 0;
+#endif
 }
 EXPORT_SYMBOL(bcm5892_nand_scan_ident);
 
 int bcm5892_nand_scan_tail (struct mtd_info *mtd)
 {
+#ifdef CONFIG_MTD_NAND
 	return nand_scan_tail (mtd);
+#else
+	return 0;
+#endif
 }
 EXPORT_SYMBOL(bcm5892_nand_scan_tail);
 
 void bcm5892_nand_dev_release (struct mtd_info *mtd)
 {
+#ifdef CONFIG_MTD_NAND
 	nand_release (mtd);
+#else
+	return;
+#endif
 }
 EXPORT_SYMBOL(bcm5892_nand_dev_release);
 

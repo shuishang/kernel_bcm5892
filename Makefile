@@ -161,6 +161,7 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
 				  -e s/sh[234].*/sh/ )
 
+SUBARCH = arm
 # Cross compiling and selecting different set of gcc/bin-utils
 # ---------------------------------------------------------------------------
 #
@@ -182,7 +183,9 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 export KBUILD_BUILDHOST := $(SUBARCH)
 ARCH		?= $(SUBARCH)
 #CROSS_COMPILE	?=
-#CROSS_COMPILE =/home/ljj/work/scl8500/brcm-armtools-64bit/tools/le_arm11_external_20090306/bin/arm-brcm-linux-gnueabi-
+CROSS_COMPILE	?= arm-none-linux-gnueabi-
+#CROSS_COMPILE	?= /home/ljj/work/pos/scl8500/toolchain/arm-2011.03/bin/arm-none-eabi-
+#CROSS_COMPILE	?=/home/ljj/work/pos/scl8500/toolchain/arm-2011.03/bin/arm-none-linux-gnueabi-
 
 # Architecture as present in compile.h
 UTS_MACHINE 	:= $(ARCH)

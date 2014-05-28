@@ -139,8 +139,8 @@ obj-$(CONFIG_FB_VGA16)            += vga16fb.o
 obj-$(CONFIG_FB_OF)               += offb.o
 obj-$(CONFIG_FB_BF54X_LQ043)	  += bf54x-lq043fb.o
 obj-$(CONFIG_FB_BFIN_T350MCQB)	  += bfin-t350mcqb-fb.o
-obj-$(CONFIG_FB_VCEB_VC03)		  += vceb_fb/
-obj-$(CONFIG_FB_VCEB_VC04)		  += vceb_fb_vc4/
+#obj-$(CONFIG_FB_VCEB_VC03)		  += vceb_fb/
+#obj-$(CONFIG_FB_VCEB_VC04)		  += vceb_fb_vc4/
 obj-$(CONFIG_FB_MX3)		  += mx3fb.o
 obj-$(CONFIG_FB_DA8XX)		  += da8xx-fb.o
 

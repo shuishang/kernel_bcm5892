@@ -628,6 +628,22 @@ static struct platform_device board_mmdma_device = {
    },
 };
 
+#define BCM5892_PA_PM_MISC (0x60000000)
+static struct resource bcm5892_pm_misc[] = {
+	{
+		.start = BCM5892_PA_PM_MISC,
+		.end   = BCM5892_PA_PM_MISC + 0x10,
+		.flags = IORESOURCE_MEM,
+	},
+};
+
+struct platform_device bcm5892_device_pm_misc = {
+	.name		  = "bcm5892-pm-misc",
+	.id		  = -1,
+	.num_resources	  = ARRAY_SIZE(bcm5892_pm_misc),
+	.resource	  = bcm5892_pm_misc,
+};
+
 #define board_bootmemheap_calc_mmdma bcm5892_bootmemheap_calc_mmdma
 static size_t board_bootmemheap_calc_mmdma(void)
 {
@@ -686,6 +702,8 @@ void __init bcm5892_init_machine( void )
 	printk(KERN_NOTICE  "SDM1 reset skip\n");
 #endif
 	platform_device_register(&sdm1);
+
+	platform_device_register(&bcm5892_device_pm_misc);
 
 #if 0
 	/* Initialize the PMB for context switching. */
@@ -880,7 +898,7 @@ __setup("bootmemheap", bcm5892_bootmemheap_setup);
 MACHINE_START(BCM5892, "Broadcom BCM5892 Chip")
 /* Maintainer: Broadcom Corporation */
 	.phys_io	= BCM5892_PERIPH_BASE,
-	.io_pg_offst	= IO_ADDRESS(BCM5892_PERIPH_BASE),
+	.io_pg_offst	= IO_ADDRESS(BCM5892_PERIPH_BASE), 
   /*	.boot_params	= (BCM5892_SRAM_BASE + 0x100), */
 	.boot_params	= (START_DDR + 0x100),
 	.fixup		= bcm5892_fixup,
